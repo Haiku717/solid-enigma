@@ -1,93 +1,80 @@
-<!-- Include Open Sans Font -->
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
-
-<div style="max-width: 900px; margin: auto; padding: 20px; background: #f9f9f9; border-radius: 12px; font-family: 'Open Sans', sans-serif; font-size: 15px; line-height: 1.6; display: flex; flex-wrap: wrap; justify-content: space-between;">
+<div style="max-width: 900px; margin: auto; padding: 20px; background: #f4f8fa; border-radius: 12px; font-family: 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.6; display: flex; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.1); color: #333;">
   <!-- Form Section -->
-  <div style="flex: 1; min-width: 280px; padding-right: 20px;">
+  <div style="flex: 1; padding-right: 20px;">
     <h3 style="text-align: center; margin-bottom: 20px; color: #007AC1;">Heat Pump Sizing Calculator</h3>
 
     <label>Length (m):<br>
-      <input type="number" id="length" step="0.1" style="width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px;">
+      <input type="number" id="length" step="0.1" style="width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 6px; border: 1px solid #ccc;">
     </label>
 
     <label>Width (m):<br>
-      <input type="number" id="width" step="0.1" style="width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px;">
+      <input type="number" id="width" step="0.1" style="width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 6px; border: 1px solid #ccc;">
     </label>
 
     <label>Height (m):<br>
-      <input type="number" id="height" step="0.1" style="width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px;">
+      <input type="number" id="height" step="0.1" style="width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 6px; border: 1px solid #ccc;">
     </label>
 
     <label>House Type:<br>
-      <select id="houseType" style="width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px;">
+      <select id="houseType" style="width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 6px; border: 1px solid #ccc;">
         <option value="new">New house (2016+)</option>
         <option value="old">Old house, cold/damp</option>
       </select>
     </label>
 
     <label>Insulation Level:<br>
-      <select id="insulation" style="width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px;">
+      <select id="insulation" style="width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 6px; border: 1px solid #ccc;">
         <option value="good">Good</option>
         <option value="average">Average</option>
         <option value="poor">Poor</option>
       </select>
     </label>
 
-    <button onclick="calculate()" style="margin-top: 10px; width: 100%; padding: 10px; background: #007AC1; color: white; border: none; border-radius: 6px; cursor: pointer;">
+    <button onclick="calculate()" style="margin-top: 10px; width: 100%; padding: 10px; background: #007AC1; color: white; border: none; border-radius: 6px; font-weight: bold;">
       Calculate
     </button>
   </div>
 
-  <!-- Calculation Results Section -->
-  <div id="result" style="flex: 1; min-width: 280px; padding-left: 20px; text-align: left; font-size: 16px; border-left: 2px solid #ddd; padding-top: 20px;">
-    <h4 style="color: #007AC1;">Estimated Heating and Cooling Requirements</h4>
-    <!-- Results will be populated here by the script -->
-  </div>
+  <!-- Results Section -->
+  <div id="result" style="flex: 1; padding-left: 20px; text-align: left; font-size: 16px; border-left: 2px solid #ddd; padding-top: 20px;"></div>
 </div>
 
 <script>
-  function calculate() {
-    const length = parseFloat(document.getElementById('length').value);
-    const width = parseFloat(document.getElementById('width').value);
-    const height = parseFloat(document.getElementById('height').value);
-    const houseType = document.getElementById('houseType').value;
-    const insulation = document.getElementById('insulation').value;
+function calculate() {
+  const length = parseFloat(document.getElementById('length').value);
+  const width = parseFloat(document.getElementById('width').value);
+  const height = parseFloat(document.getElementById('height').value);
+  const houseType = document.getElementById('houseType').value;
+  const insulation = document.getElementById('insulation').value;
 
-    if (isNaN(length) || isNaN(width) || isNaN(height)) {
-      document.getElementById('result').innerHTML = '<p style="color: red;">Please enter valid room dimensions.</p>';
-      return;
-    }
-
-    const volume = length * width * height;
-
-    let heatingW = 50;
-    let coolingW = 45;
-
-    if (houseType === 'new') {
-      heatingW = insulation === 'good' ? 50 : insulation === 'average' ? 55 : 60;
-      coolingW = insulation === 'good' ? 45 : insulation === 'average' ? 50 : 55;
-    } else {
-      heatingW = insulation === 'good' ? 55 : insulation === 'average' ? 65 : 70;
-      coolingW = insulation === 'good' ? 45 : insulation === 'average' ? 55 : 60;
-    }
-
-    const heatingKW = (volume * heatingW / 1000).toFixed(2);
-    const coolingKW = (volume * coolingW / 1000).toFixed(2);
-
-    document.getElementById('result').innerHTML = `
-      <p><strong>Room Volume:</strong> ${volume.toFixed(2)} m³</p>
-      <p><strong>Heating:</strong> ${heatingKW} kW</p>
-      <p><strong>Cooling:</strong> ${coolingKW} kW</p>
-
-      <h4 style="margin-top: 25px; color: #007AC1;">Recommended Models</h4>
-      <details style="background: #eee; padding: 12px; border-radius: 6px; margin-bottom: 15px;">
-        <summary style="cursor: pointer; font-weight: bold;">Model 1</summary>
-        <p style="margin-top: 10px;">This is a great option for this room size. <br><a href="#">View Product 1</a></p>
-      </details>
-      <details style="background: #eee; padding: 12px; border-radius: 6px;">
-        <summary style="cursor: pointer; font-weight: bold;">Model 2</summary>
-        <p style="margin-top: 10px;">This unit provides excellent coverage for medium to large spaces. <br><a href="#">View Product 2</a></p>
-      </details>
-    `;
+  if (isNaN(length) || isNaN(width) || isNaN(height)) {
+    document.getElementById('result').innerHTML = '<p style="color: red;">Please enter valid room dimensions.</p>';
+    return;
   }
+
+  const volume = length * width * height;
+
+  let heatingW = 50;
+  let coolingW = 45;
+
+  if (houseType === 'new') {
+    heatingW = insulation === 'good' ? 50 : insulation === 'average' ? 55 : 60;
+    coolingW = insulation === 'good' ? 45 : insulation === 'average' ? 50 : 55;
+  } else {
+    heatingW = insulation === 'good' ? 55 : insulation === 'average' ? 65 : 70;
+    coolingW = insulation === 'good' ? 45 : insulation === 'average' ? 55 : 60;
+  }
+
+  const heatingKW = (volume * heatingW / 1000).toFixed(2);
+  const coolingKW = (volume * coolingW / 1000).toFixed(2);
+
+  document.getElementById('result').innerHTML = `
+    <h4 style="color: #007AC1;">Estimated Heating and Cooling Requirements</h4>
+    <p><strong>Heating:</strong> ${heatingKW} kW</p>
+    <p><strong>Cooling:</strong> ${coolingKW} kW</p>
+
+    <h4 style="margin-top: 25px; color: #007AC1;">Recommended Models</h4>
+    <p>Daikin Standard 4.6kW or Mitsubishi Electric AP42</p>
+  `;
+}
 </script>
