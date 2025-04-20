@@ -87,37 +87,37 @@
       const heatingKW = (volume * heatingW / 1000).toFixed(2);
 
       const mitsubishiModels = [
-        { model: "MSZ-AP25VGKD2", heatingKW: 3.2 },
-        { model: "MSZ-AP35VGKD2", heatingKW: 3.7 },
-        { model: "MSZ-AP50VGKD2", heatingKW: 6.0 },
-        { model: "MSZ-AP60VGKD2", heatingKW: 6.8 },
-        { model: "MSZ-AP71VGKD2", heatingKW: 8.0 },
-        { model: "MSZ-AP80VGKD2", heatingKW: 9.0 },
-        { model: "MSZ-AS90VGD", heatingKW: 10.3 }
+        { model: "MSZ-AP25VGKD2", heatingKW: 3.2, coolingKW: 2.5 },
+        { model: "MSZ-AP35VGKD2", heatingKW: 3.7, coolingKW: 3.5 },
+        { model: "MSZ-AP50VGKD2", heatingKW: 6.0, coolingKW: 5.0 },
+        { model: "MSZ-AP60VGKD2", heatingKW: 6.8, coolingKW: 6.0 },
+        { model: "MSZ-AP71VGKD2", heatingKW: 8.0, coolingKW: 7.1 },
+        { model: "MSZ-AP80VGKD2", heatingKW: 9.0, coolingKW: 8.0 },
+        { model: "MSZ-AS90VGD", heatingKW: 10.3, coolingKW: 9.0 }
       ];
 
       const coraModels = [
-        { model: "FTXM20UVMZ", heatingKW: 2.8 },
-        { model: "FTXM25UVMZ", heatingKW: 3.3 },
-        { model: "FTXM35UVMZ", heatingKW: 4.0 },
-        { model: "FTXM46UVMZ", heatingKW: 5.4 },
-        { model: "FTXM50UVMZ", heatingKW: 6.1 },
-        { model: "FTXM60UVMZ", heatingKW: 7.3 },
-        { model: "FTXM71UVMZ", heatingKW: 8.1 },
-        { model: "FTXM85PAVMA", heatingKW: 9.0 },
-        { model: "FTXM95PAVMA", heatingKW: 10.3 }
+        { model: "FTXM20UVMZ", heatingKW: 2.8, coolingKW: 2.0 },
+        { model: "FTXM25UVMZ", heatingKW: 3.3, coolingKW: 2.5 },
+        { model: "FTXM35UVMZ", heatingKW: 4.0, coolingKW: 3.5 },
+        { model: "FTXM46UVMZ", heatingKW: 5.4, coolingKW: 4.6 },
+        { model: "FTXM50UVMZ", heatingKW: 6.1, coolingKW: 5.0 },
+        { model: "FTXM60UVMZ", heatingKW: 7.3, coolingKW: 6.0 },
+        { model: "FTXM71UVMZ", heatingKW: 8.1, coolingKW: 7.1 },
+        { model: "FTXM85PAVMA", heatingKW: 9.0, coolingKW: 8.5 },
+        { model: "FTXM95PAVMA", heatingKW: 10.3, coolingKW: 9.4 }
       ];
 
       const fujitsuModels = [
-        { model: "ASTH07KNCA", heatingKW: 2.5 },
-        { model: "ASTH09KNCA", heatingKW: 3.2 },
-        { model: "ASTH12KNCA", heatingKW: 4.0 },
-        { model: "ASTH14KNCA", heatingKW: 4.7 },
-        { model: "ASTH18KNTA", heatingKW: 5.2 },
-        { model: "ASTH22KNTA", heatingKW: 6.5 },
-        { model: "ASTH24KNTA", heatingKW: 8.0 },
-        { model: "ASTH30KNTA", heatingKW: 9.0 },
-        { model: "ASTH34KNTA", heatingKW: 10.3 }
+        { model: "ASTH07KNCA", heatingKW: 2.5, coolingKW: 2.1 },
+        { model: "ASTH09KNCA", heatingKW: 3.2, coolingKW: 2.5 },
+        { model: "ASTH12KNCA", heatingKW: 4.0, coolingKW: 3.5 },
+        { model: "ASTH14KNCA", heatingKW: 4.7, coolingKW: 4.2 },
+        { model: "ASTH18KNTA", heatingKW: 5.2, coolingKW: 4.8 },
+        { model: "ASTH22KNTA", heatingKW: 6.5, coolingKW: 6.0 },
+        { model: "ASTH24KNTA", heatingKW: 8.0, coolingKW: 7.0 },
+        { model: "ASTH30KNTA", heatingKW: 9.0, coolingKW: 8.0 },
+        { model: "ASTH34KNTA", heatingKW: 10.3, coolingKW: 9.4 }
       ];
 
       const firstMitsubishi = mitsubishiModels.find(model => model.heatingKW >= heatingKW);
@@ -134,6 +134,7 @@
             </summary>
             <p style="margin-top: 10px; padding-left: 10px;">
               Heating Capacity: ${modelObj.heatingKW} kW <br>
+              Cooling Capacity: ${modelObj.coolingKW} kW <br>
               <a href="#" style="color: #007AC1;">View Product</a>
             </p>
           </details>
@@ -153,7 +154,7 @@
         <p><strong><i class="fas fa-fire"></i> Heating Capacity Required:</strong> ${heatingKW} kW</p>
         <h4 style="margin-top: 25px;"><i class="fas fa-thumbs-up"></i> Recommended Models</h4>
         ${recommendations}
-        <p style="margin-top: 30px; color: #666;"><i class="fas fa-envelope-open-text"></i> Have questions or want a quote? Use the adjacent form to get in touch, we're here to help!</p>
+        <p style="margin-top: 30px; color: #666;"><i class="fas fa-envelope-open-text"></i> Have questions or want a quote? Use the form to get in touch — we're here to help!</p>
       `;
     }
   </script>
