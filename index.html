@@ -1,50 +1,44 @@
-<div style="max-width: 900px; margin: auto; padding: 20px; background: #f4f8fa; border-radius: 12px; font-family: 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.6; display: flex; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.1); color: #333;">
-  <!-- Calculator Form -->
+<div style="max-width: 900px; margin: auto; padding: 20px; background: #f9f9f9; border-radius: 12px; font-family: sans-serif; font-size: 15px; line-height: 1.6; display: flex; justify-content: space-between;">
+  <!-- Form Section -->
   <div style="flex: 1; padding-right: 20px;">
-    <h3 style="text-align: center; margin-bottom: 20px; color: #007AC1;">Heat Pump Sizing Calculator</h3>
+    <h3 style="text-align: center; margin-bottom: 20px;">Heat Pump Sizing Calculator</h3>
 
     <label>Length (m):<br>
-      <input type="number" id="length" step="0.1" style="width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 6px; border: 1px solid #ccc;">
+      <input type="number" id="length" step="0.1" style="width: 100%; padding: 8px; margin-bottom: 12px;">
     </label>
 
     <label>Width (m):<br>
-      <input type="number" id="width" step="0.1" style="width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 6px; border: 1px solid #ccc;">
+      <input type="number" id="width" step="0.1" style="width: 100%; padding: 8px; margin-bottom: 12px;">
     </label>
 
     <label>Height (m):<br>
-      <input type="number" id="height" step="0.1" style="width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 6px; border: 1px solid #ccc;">
+      <input type="number" id="height" step="0.1" style="width: 100%; padding: 8px; margin-bottom: 12px;">
     </label>
 
     <label>House Type:<br>
-      <select id="houseType" style="width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 6px; border: 1px solid #ccc;">
+      <select id="houseType" style="width: 100%; padding: 8px; margin-bottom: 12px;">
         <option value="new">New house (2016+)</option>
         <option value="old">Old house, cold/damp</option>
       </select>
     </label>
 
     <label>Insulation Level:<br>
-      <select id="insulation" style="width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 6px; border: 1px solid #ccc;">
+      <select id="insulation" style="width: 100%; padding: 8px; margin-bottom: 12px;">
         <option value="good">Good</option>
         <option value="average">Average</option>
         <option value="poor">Poor</option>
       </select>
     </label>
 
-    <button onclick="calculate()" style="margin-top: 10px; width: 100%; padding: 10px; background: #007AC1; color: white; border: none; border-radius: 6px; font-weight: bold;">
+    <button onclick="calculate()" style="margin-top: 10px; width: 100%; padding: 10px; background: #007AC1; color: white; border: none; border-radius: 6px;">
       Calculate
     </button>
   </div>
 
-  <!-- Results + Contact Link -->
-  <div style="flex: 1; padding-left: 20px; border-left: 2px solid #ddd;">
-    <div id="result" style="font-size: 16px; padding-top: 20px;"></div>
-
-    <!-- Redirect Button to Contact -->
-    <div id="quoteButton" style="margin-top: 30px; display: none;">
-      <a href="https://chillair.co.nz/#contact" style="display: inline-block; padding: 12px 20px; background: #007AC1; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">
-        Contact Us for a Quote
-      </a>
-    </div>
+  <!-- Calculation Results Section -->
+  <div id="result" style="flex: 1; padding-left: 20px; text-align: left; font-size: 16px; border-left: 2px solid #ddd; padding-top: 20px;">
+    <h4>Estimated Heating and Cooling Requirements</h4>
+    <!-- Results will be populated here by the script -->
   </div>
 </div>
 
@@ -58,7 +52,6 @@ function calculate() {
 
   if (isNaN(length) || isNaN(width) || isNaN(height)) {
     document.getElementById('result').innerHTML = '<p style="color: red;">Please enter valid room dimensions.</p>';
-    document.getElementById('quoteButton').style.display = 'none';
     return;
   }
 
@@ -78,15 +71,54 @@ function calculate() {
   const heatingKW = (volume * heatingW / 1000).toFixed(2);
   const coolingKW = (volume * coolingW / 1000).toFixed(2);
 
+  let recommendedModel = '';
+
+  // Match models based on heating KW
+  if (heatingKW <= 3.2) {
+    recommendedModel = 'MSZ-AP25VGKD2 (Heating: 3.2kW)';
+  } else if (heatingKW <= 3.7) {
+    recommendedModel = 'MSZ-AP35VGKD2 (Heating: 3.7kW)';
+  } else if (heatingKW <= 6.0) {
+    recommendedModel = 'MSZ-AP50VGKD2 (Heating: 6.0kW)';
+  } else if (heatingKW <= 6.8) {
+    recommendedModel = 'MSZ-AP60VGKD2 (Heating: 6.8kW)';
+  } else if (heatingKW <= 8.0) {
+    recommendedModel = 'MSZ-AP71VGKD2 (Heating: 8.0kW)';
+  } else if (heatingKW <= 9.0) {
+    recommendedModel = 'MSZ-AP80VGKD2 (Heating: 9.0kW)';
+  } else {
+    recommendedModel = 'MSZ-AS90VGD (Heating: 10.3kW)';
+  }
+
+  // For cooling, similar logic:
+  let recommendedCoolingModel = '';
+  if (coolingKW <= 2.5) {
+    recommendedCoolingModel = 'MSZ-AP25VGKD2 (Cooling: 2.5kW)';
+  } else if (coolingKW <= 3.5) {
+    recommendedCoolingModel = 'MSZ-AP35VGKD2 (Cooling: 3.5kW)';
+  } else if (coolingKW <= 5.0) {
+    recommendedCoolingModel = 'MSZ-AP50VGKD2 (Cooling: 5.0kW)';
+  } else if (coolingKW <= 6.0) {
+    recommendedCoolingModel = 'MSZ-AP60VGKD2 (Cooling: 6.0kW)';
+  } else if (coolingKW <= 7.1) {
+    recommendedCoolingModel = 'MSZ-AP71VGKD2 (Cooling: 7.1kW)';
+  } else if (coolingKW <= 7.8) {
+    recommendedCoolingModel = 'MSZ-AP80VGKD2 (Cooling: 7.8kW)';
+  } else {
+    recommendedCoolingModel = 'MSZ-AS90VGD (Cooling: 9.0kW)';
+  }
+
   document.getElementById('result').innerHTML = `
-    <h4 style="color: #007AC1;">Estimated Heating and Cooling Requirements</h4>
+    <p><strong>Room Volume:</strong> ${volume.toFixed(2)} m³</p>
     <p><strong>Heating:</strong> ${heatingKW} kW</p>
     <p><strong>Cooling:</strong> ${coolingKW} kW</p>
 
-    <h4 style="margin-top: 25px; color: #007AC1;">Recommended Models</h4>
-    <p>Daikin Standard 4.6kW or Mitsubishi Electric AP42</p>
-  `;
+    <h4 style="margin-top: 25px;">Recommended Models</h4>
+    <p><strong>For Heating:</strong> ${recommendedModel}</p>
+    <p><strong>For Cooling:</strong> ${recommendedCoolingModel}</p>
 
-  document.getElementById('quoteButton').style.display = 'block';
+    <h4 style="margin-top: 25px;">Contact Us for a Quote</h4>
+    <p>If you'd like a quote for one of these models or have any questions, please <a href="#contact" style="color: #007AC1; text-decoration: none;">contact us here</a>.</p>
+  `;
 }
 </script>
