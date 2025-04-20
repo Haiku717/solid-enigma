@@ -2,7 +2,7 @@
   <!-- Form Section -->
   <div style="flex: 1; padding-right: 20px;">
     <h3 style="text-align: center; margin-bottom: 20px;">Heat Pump Sizing Calculator</h3>
-
+    
     <label>Length (m):<br>
       <input type="number" id="length" step="0.1" style="width: 100%; padding: 8px; margin-bottom: 12px;">
     </label>
@@ -35,90 +35,88 @@
     </button>
   </div>
 
-  <!-- Calculation Results Section -->
+  <!-- Results Section -->
   <div id="result" style="flex: 1; padding-left: 20px; text-align: left; font-size: 16px; border-left: 2px solid #ddd; padding-top: 20px;">
-    <h4>Estimated Heating and Cooling Requirements</h4>
-    <!-- Results will be populated here by the script -->
+    <h4>Estimated Heating Requirements</h4>
+    <!-- Results will populate here -->
   </div>
 </div>
 
 <script>
-function calculate() {
-  const length = parseFloat(document.getElementById('length').value);
-  const width = parseFloat(document.getElementById('width').value);
-  const height = parseFloat(document.getElementById('height').value);
-  const houseType = document.getElementById('houseType').value;
-  const insulation = document.getElementById('insulation').value;
+  function calculate() {
+    const length = parseFloat(document.getElementById('length').value);
+    const width = parseFloat(document.getElementById('width').value);
+    const height = parseFloat(document.getElementById('height').value);
+    const houseType = document.getElementById('houseType').value;
+    const insulation = document.getElementById('insulation').value;
 
-  if (isNaN(length) || isNaN(width) || isNaN(height)) {
-    document.getElementById('result').innerHTML = '<p style="color: red;">Please enter valid room dimensions.</p>';
-    return;
+    if (isNaN(length) || isNaN(width) || isNaN(height)) {
+      document.getElementById('result').innerHTML = '<p style="color: red;">Please enter valid room dimensions.</p>';
+      return;
+    }
+
+    const volume = length * width * height;
+
+    let heatingW = 50;
+    if (houseType === 'new') {
+      heatingW = insulation === 'good' ? 50 : insulation === 'average' ? 55 : 60;
+    } else {
+      heatingW = insulation === 'good' ? 55 : insulation === 'average' ? 65 : 70;
+    }
+
+    const heatingKW = (volume * heatingW / 1000).toFixed(2);
+
+    const mitsubishiModels = [
+      { model: "MSZ-AP25VGKD2", heatingKW: 3.2 },
+      { model: "MSZ-AP35VGKD2", heatingKW: 3.7 },
+      { model: "MSZ-AP50VGKD2", heatingKW: 6.0 },
+      { model: "MSZ-AP60VGKD2", heatingKW: 6.8 },
+      { model: "MSZ-AP71VGKD2", heatingKW: 8.0 },
+      { model: "MSZ-AP80VGKD2", heatingKW: 9.0 },
+      { model: "MSZ-AS90VGD", heatingKW: 10.3 }
+    ];
+
+    const coraModels = [
+      { model: "FTXM20UVMZ", heatingKW: 2.8 },
+      { model: "FTXM25UVMZ", heatingKW: 3.3 },
+      { model: "FTXM35UVMZ", heatingKW: 4.0 },
+      { model: "FTXM46UVMZ", heatingKW: 5.4 },
+      { model: "FTXM50UVMZ", heatingKW: 6.1 },
+      { model: "FTXM60UVMZ", heatingKW: 7.3 },
+      { model: "FTXM71UVMZ", heatingKW: 8.1 },
+      { model: "FTXM85PAVMA", heatingKW: 9.0 },
+      { model: "FTXM95PAVMA", heatingKW: 10.3 }
+    ];
+
+    const firstMitsubishi = mitsubishiModels.find(model => model.heatingKW >= heatingKW);
+    const firstCora = coraModels.find(model => model.heatingKW >= heatingKW);
+
+    let recommendations = '';
+    if (firstMitsubishi) {
+      recommendations += `
+        <details style="background: #eee; padding: 12px; border-radius: 6px; margin-bottom: 15px;">
+          <summary style="cursor: pointer; font-weight: bold;">${firstMitsubishi.model}</summary>
+          <p style="margin-top: 10px;">Heating: ${firstMitsubishi.heatingKW} kW <br> Suitable for your space. <br><a href="#">View Product</a></p>
+        </details>
+      `;
+    }
+    if (firstCora) {
+      recommendations += `
+        <details style="background: #eee; padding: 12px; border-radius: 6px; margin-bottom: 15px;">
+          <summary style="cursor: pointer; font-weight: bold;">${firstCora.model}</summary>
+          <p style="margin-top: 10px;">Heating: ${firstCora.heatingKW} kW <br> Suitable for your space. <br><a href="#">View Product</a></p>
+        </details>
+      `;
+    }
+
+    document.getElementById('result').innerHTML = `
+      <p><strong>Room Volume:</strong> ${volume.toFixed(2)} m³</p>
+      <p><strong>Heating:</strong> ${heatingKW} kW</p>
+
+      <h4 style="margin-top: 25px;">Recommended Models</h4>
+      ${recommendations}
+
+      <h4 style="margin-top: 25px;">If you have any questions or would like a quote, <a href="https://chillair.co.nz/#contact" style="color: #007AC1; text-decoration: none; font-weight: bold;">click here</a>.</h4>
+    `;
   }
-
-  const volume = length * width * height;
-
-  let heatingW = 50;
-  let coolingW = 45;
-
-  if (houseType === 'new') {
-    heatingW = insulation === 'good' ? 50 : insulation === 'average' ? 55 : 60;
-    coolingW = insulation === 'good' ? 45 : insulation === 'average' ? 50 : 55;
-  } else {
-    heatingW = insulation === 'good' ? 55 : insulation === 'average' ? 65 : 70;
-    coolingW = insulation === 'good' ? 45 : insulation === 'average' ? 55 : 60;
-  }
-
-  const heatingKW = (volume * heatingW / 1000).toFixed(2);
-  const coolingKW = (volume * coolingW / 1000).toFixed(2);
-
-  let recommendedModel = '';
-
-  // Match models based on heating KW
-  if (heatingKW <= 3.2) {
-    recommendedModel = 'MSZ-AP25VGKD2 (Heating: 3.2kW)';
-  } else if (heatingKW <= 3.7) {
-    recommendedModel = 'MSZ-AP35VGKD2 (Heating: 3.7kW)';
-  } else if (heatingKW <= 6.0) {
-    recommendedModel = 'MSZ-AP50VGKD2 (Heating: 6.0kW)';
-  } else if (heatingKW <= 6.8) {
-    recommendedModel = 'MSZ-AP60VGKD2 (Heating: 6.8kW)';
-  } else if (heatingKW <= 8.0) {
-    recommendedModel = 'MSZ-AP71VGKD2 (Heating: 8.0kW)';
-  } else if (heatingKW <= 9.0) {
-    recommendedModel = 'MSZ-AP80VGKD2 (Heating: 9.0kW)';
-  } else {
-    recommendedModel = 'MSZ-AS90VGD (Heating: 10.3kW)';
-  }
-
-  // For cooling, similar logic:
-  let recommendedCoolingModel = '';
-  if (coolingKW <= 2.5) {
-    recommendedCoolingModel = 'MSZ-AP25VGKD2 (Cooling: 2.5kW)';
-  } else if (coolingKW <= 3.5) {
-    recommendedCoolingModel = 'MSZ-AP35VGKD2 (Cooling: 3.5kW)';
-  } else if (coolingKW <= 5.0) {
-    recommendedCoolingModel = 'MSZ-AP50VGKD2 (Cooling: 5.0kW)';
-  } else if (coolingKW <= 6.0) {
-    recommendedCoolingModel = 'MSZ-AP60VGKD2 (Cooling: 6.0kW)';
-  } else if (coolingKW <= 7.1) {
-    recommendedCoolingModel = 'MSZ-AP71VGKD2 (Cooling: 7.1kW)';
-  } else if (coolingKW <= 7.8) {
-    recommendedCoolingModel = 'MSZ-AP80VGKD2 (Cooling: 7.8kW)';
-  } else {
-    recommendedCoolingModel = 'MSZ-AS90VGD (Cooling: 9.0kW)';
-  }
-
-  document.getElementById('result').innerHTML = `
-    <p><strong>Room Volume:</strong> ${volume.toFixed(2)} m³</p>
-    <p><strong>Heating:</strong> ${heatingKW} kW</p>
-    <p><strong>Cooling:</strong> ${coolingKW} kW</p>
-
-    <h4 style="margin-top: 25px;">Recommended Models</h4>
-    <p><strong>For Heating:</strong> ${recommendedModel}</p>
-    <p><strong>For Cooling:</strong> ${recommendedCoolingModel}</p>
-
-    <h4 style="margin-top: 25px;">Contact Us for a Quote</h4>
-    <p>If you'd like a quote for one of these models or have any questions, please <a href="#contact" style="color: #007AC1; text-decoration: none;">contact us here</a>.</p>
-  `;
-}
 </script>
