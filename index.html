@@ -4,14 +4,12 @@
   <meta charset="UTF-8">
   <title>Heat Pump Calculator</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <!-- Google Analytics Tracking Code -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y0L8T6CDES"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag(){ dataLayer.push(arguments); }
     gtag('js', new Date());
-    gtag('config', 'G-Y0L8T6CDES');  // Replace YOUR_TRACKING_ID with your Google Analytics tracking ID
+    gtag('config', 'G-Y0L8T6CDES');
   </script>
 </head>
 <body style="background: #f2f4f7; margin: 0; padding: 40px; font-family: 'Segoe UI', sans-serif;">
@@ -95,83 +93,91 @@
 
       const heatingKW = (volume * heatingW / 1000).toFixed(2);
 
-      // Send a custom event to Google Analytics on calculation
-      gtag('event', 'calculate', {
-        'event_category': 'calculator',
-        'event_label': 'heat_pump_sizing',
-        'value': heatingKW
-      });
-
-      const mitsubishiModels = [
-        { model: "MSZ-AP25VGKD2", heatingKW: 3.2, coolingKW: 2.5 },
-        { model: "MSZ-AP35VGKD2", heatingKW: 3.7, coolingKW: 3.5 },
-        { model: "MSZ-AP50VGKD2", heatingKW: 6.0, coolingKW: 5.0 },
-        { model: "MSZ-AP60VGKD2", heatingKW: 6.8, coolingKW: 6.0 },
-        { model: "MSZ-AP71VGKD2", heatingKW: 8.0, coolingKW: 7.1 },
-        { model: "MSZ-AP80VGKD2", heatingKW: 9.0, coolingKW: 8.0 },
-        { model: "MSZ-AS90VGD", heatingKW: 10.3, coolingKW: 9.0 }
+      const brands = [
+        {
+          name: "Mitsubishi Electric",
+          models: [
+            { model: "MSZ-AP25VGKD2", heatingKW: 3.2, coolingKW: 2.5 },
+            { model: "MSZ-AP35VGKD2", heatingKW: 3.7, coolingKW: 3.5 },
+            { model: "MSZ-AP50VGKD2", heatingKW: 6.0, coolingKW: 5.0 },
+            { model: "MSZ-AP60VGKD2", heatingKW: 6.8, coolingKW: 6.0 },
+            { model: "MSZ-AP71VGKD2", heatingKW: 8.0, coolingKW: 7.1 },
+            { model: "MSZ-AP80VGKD2", heatingKW: 9.0, coolingKW: 8.0 },
+            { model: "MSZ-AS90VGD", heatingKW: 10.3, coolingKW: 9.0 }
+          ]
+        },
+        {
+          name: "Daikin Cora",
+          models: [
+            { model: "FTXM20UVMZ", heatingKW: 2.8, coolingKW: 2.0 },
+            { model: "FTXM25UVMZ", heatingKW: 3.3, coolingKW: 2.5 },
+            { model: "FTXM35UVMZ", heatingKW: 4.0, coolingKW: 3.5 },
+            { model: "FTXM46UVMZ", heatingKW: 5.4, coolingKW: 4.6 },
+            { model: "FTXM50UVMZ", heatingKW: 6.1, coolingKW: 5.0 },
+            { model: "FTXM60UVMZ", heatingKW: 7.3, coolingKW: 6.0 },
+            { model: "FTXM71UVMZ", heatingKW: 8.1, coolingKW: 7.1 },
+            { model: "FTXM85PAVMA", heatingKW: 9.0, coolingKW: 8.5 },
+            { model: "FTXM95PAVMA", heatingKW: 10.3, coolingKW: 9.4 }
+          ]
+        },
+        {
+          name: "Fujitsu",
+          models: [
+            { model: "ASTH07KNCA", heatingKW: 2.5, coolingKW: 2.1 },
+            { model: "ASTH09KNCA", heatingKW: 3.2, coolingKW: 2.5 },
+            { model: "ASTH12KNCA", heatingKW: 4.0, coolingKW: 3.5 },
+            { model: "ASTH14KNCA", heatingKW: 4.7, coolingKW: 4.2 },
+            { model: "ASTH18KNTA", heatingKW: 5.2, coolingKW: 4.8 },
+            { model: "ASTH22KNTA", heatingKW: 6.5, coolingKW: 6.0 },
+            { model: "ASTH24KNTA", heatingKW: 8.0, coolingKW: 7.0 },
+            { model: "ASTH30KNTA", heatingKW: 9.0, coolingKW: 8.0 },
+            { model: "ASTH34KNTA", heatingKW: 10.3, coolingKW: 9.4 }
+          ]
+        }
       ];
 
-      const coraModels = [
-        { model: "FTXM20UVMZ", heatingKW: 2.8, coolingKW: 2.0 },
-        { model: "FTXM25UVMZ", heatingKW: 3.3, coolingKW: 2.5 },
-        { model: "FTXM35UVMZ", heatingKW: 4.0, coolingKW: 3.5 },
-        { model: "FTXM46UVMZ", heatingKW: 5.4, coolingKW: 4.6 },
-        { model: "FTXM50UVMZ", heatingKW: 6.1, coolingKW: 5.0 },
-        { model: "FTXM60UVMZ", heatingKW: 7.3, coolingKW: 6.0 },
-        { model: "FTXM71UVMZ", heatingKW: 8.1, coolingKW: 7.1 },
-        { model: "FTXM85PAVMA", heatingKW: 9.0, coolingKW: 8.5 },
-        { model: "FTXM95PAVMA", heatingKW: 10.3, coolingKW: 9.4 }
-      ];
+      const recommendations = [];
 
-      const fujitsuModels = [
-        { model: "ASTH07KNCA", heatingKW: 2.5, coolingKW: 2.1 },
-        { model: "ASTH09KNCA", heatingKW: 3.2, coolingKW: 2.5 },
-        { model: "ASTH12KNCA", heatingKW: 4.0, coolingKW: 3.5 },
-        { model: "ASTH14KNCA", heatingKW: 4.7, coolingKW: 4.2 },
-        { model: "ASTH18KNTA", heatingKW: 5.2, coolingKW: 4.8 },
-        { model: "ASTH22KNTA", heatingKW: 6.5, coolingKW: 6.0 },
-        { model: "ASTH24KNTA", heatingKW: 8.0, coolingKW: 7.0 },
-        { model: "ASTH30KNTA", heatingKW: 9.0, coolingKW: 8.0 },
-        { model: "ASTH34KNTA", heatingKW: 10.3, coolingKW: 9.4 }
-      ];
-
-      const firstMitsubishi = mitsubishiModels.find(model => model.heatingKW >= heatingKW);
-      const firstCora = coraModels.find(model => model.heatingKW >= heatingKW);
-      const firstFujitsu = fujitsuModels.find(model => model.heatingKW >= heatingKW);
-
-      let recommendations = '';
-
-      function addRecommendation(modelObj, brand) {
-        recommendations += `
-          <details style="background: #f9f9f9; padding: 12px 18px; border-radius: 10px; margin-bottom: 20px;">
-            <summary style="cursor: pointer; font-weight: 600; font-size: 16px;">
-              <i class="fas fa-snowflake" style="margin-right: 10px; color: #007AC1;"></i>${modelObj.model} <span style="color: #555;">(${brand})</span>
-            </summary>
-            <p style="margin-top: 10px; padding-left: 10px;">
-              Heating Capacity: ${modelObj.heatingKW} kW <br>
-              Cooling Capacity: ${modelObj.coolingKW} kW <br>
-              <a href="#" style="color: #007AC1;">View Product</a>
-            </p>
-          </details>
-        `;
+      for (const brand of brands) {
+        const suitableModels = brand.models.filter(m => m.heatingKW >= heatingKW);
+        if (suitableModels.length > 0) {
+          const bestMatch = suitableModels.reduce((prev, curr) =>
+            (curr.heatingKW - heatingKW) < (prev.heatingKW - heatingKW) ? curr : prev
+          );
+          recommendations.push({ brand: brand.name, ...bestMatch });
+        }
       }
 
-      if (firstMitsubishi) addRecommendation(firstMitsubishi, "Mitsubishi Electric");
-      if (firstCora) addRecommendation(firstCora, "Daikin Cora");
-      if (firstFujitsu) addRecommendation(firstFujitsu, "Fujitsu");
+      recommendations.sort((a, b) => (a.heatingKW - heatingKW) - (b.heatingKW - heatingKW));
 
-      if (!firstMitsubishi && !firstCora && !firstFujitsu) {
-        recommendations = `<p style="color: red; font-weight: bold;">Your heating requirements exceed the available products listed here. Please contact us for a tailored solution, including ducted systems and larger capacity units.</p>`;
-      }
-
-      document.getElementById('result').innerHTML = `
+      let output = `
         <p><strong><i class="fas fa-cube"></i> Room Volume:</strong> ${volume.toFixed(2)} m³</p>
         <p><strong><i class="fas fa-fire"></i> Heating Capacity Required:</strong> ${heatingKW} kW</p>
         <h4 style="margin-top: 25px;"><i class="fas fa-thumbs-up"></i> Recommended Models</h4>
-        ${recommendations}
-        <p style="margin-top: 30px; color: #666;"><i class="fas fa-envelope-open-text"></i> Have any questions or want a quote? Use the adjacent form to get in touch, we're here to help!</p>
       `;
+
+      if (recommendations.length === 0) {
+        output += `<p style="color: red; font-weight: bold;">No suitable models found. Please contact us for a custom solution.</p>`;
+      } else {
+        recommendations.forEach((rec, index) => {
+          const openStatus = index === 0 ? 'open' : ''; // Only open the closest match by default
+          output += `
+            <details ${openStatus} style="background: #f9f9f9; padding: 12px 18px; border-radius: 10px; margin-bottom: 20px;">
+              <summary style="cursor: pointer; font-weight: 600; font-size: 16px;">
+                <i class="fas fa-snowflake" style="margin-right: 10px; color: #007AC1;"></i>${rec.model} <span style="color: #555;">(${rec.brand})</span>
+              </summary>
+              <p style="margin-top: 10px; padding-left: 10px;">
+                Heating Capacity: ${rec.heatingKW} kW <br>
+                Cooling Capacity: ${rec.coolingKW} kW <br>
+                <a href="#" style="color: #007AC1;">View Product</a>
+              </p>
+            </details>
+          `;
+        });
+      }
+
+      output += `<p style="margin-top: 30px; color: #666;"><i class="fas fa-envelope-open-text"></i> Have any questions or want a quote? Use the adjacent form to get in touch, we're here to help!</p>`;
+      document.getElementById('result').innerHTML = output;
     }
   </script>
 </body>
