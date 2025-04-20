@@ -55,6 +55,9 @@
       return;
     }
 
+    // Show loading spinner while calculating
+    document.getElementById('result').innerHTML = '<p>Calculating...</p>';
+
     const volume = length * width * height;
 
     let heatingW = 50;
@@ -66,57 +69,93 @@
 
     const heatingKW = (volume * heatingW / 1000).toFixed(2);
 
+    // Define model data
     const mitsubishiModels = [
-      { model: "MSZ-AP25VGKD2", heatingKW: 3.2 },
-      { model: "MSZ-AP35VGKD2", heatingKW: 3.7 },
-      { model: "MSZ-AP50VGKD2", heatingKW: 6.0 },
-      { model: "MSZ-AP60VGKD2", heatingKW: 6.8 },
-      { model: "MSZ-AP71VGKD2", heatingKW: 8.0 },
-      { model: "MSZ-AP80VGKD2", heatingKW: 9.0 },
-      { model: "MSZ-AS90VGD", heatingKW: 10.3 }
+      { model: "MSZ-AP25VGKD2", heatingKW: 3.2, cop: "N/A", eer: "N/A" },
+      { model: "MSZ-AP35VGKD2", heatingKW: 3.7, cop: "N/A", eer: "N/A" },
+      { model: "MSZ-AP50VGKD2", heatingKW: 6.0, cop: "N/A", eer: "N/A" },
+      { model: "MSZ-AP60VGKD2", heatingKW: 6.8, cop: "N/A", eer: "N/A" },
+      { model: "MSZ-AP71VGKD2", heatingKW: 8.0, cop: "N/A", eer: "N/A" },
+      { model: "MSZ-AP80VGKD2", heatingKW: 9.0, cop: "N/A", eer: "N/A" },
+      { model: "MSZ-AS90VGD", heatingKW: 10.3, cop: "N/A", eer: "N/A" }
     ];
 
     const coraModels = [
-      { model: "FTXM20UVMZ", heatingKW: 2.8 },
-      { model: "FTXM25UVMZ", heatingKW: 3.3 },
-      { model: "FTXM35UVMZ", heatingKW: 4.0 },
-      { model: "FTXM46UVMZ", heatingKW: 5.4 },
-      { model: "FTXM50UVMZ", heatingKW: 6.1 },
-      { model: "FTXM60UVMZ", heatingKW: 7.3 },
-      { model: "FTXM71UVMZ", heatingKW: 8.1 },
-      { model: "FTXM85PAVMA", heatingKW: 9.0 },
-      { model: "FTXM95PAVMA", heatingKW: 10.3 }
+      { model: "FTXM20UVMZ", heatingKW: 2.8, cop: "N/A", eer: "N/A" },
+      { model: "FTXM25UVMZ", heatingKW: 3.3, cop: "N/A", eer: "N/A" },
+      { model: "FTXM35UVMZ", heatingKW: 4.0, cop: "N/A", eer: "N/A" },
+      { model: "FTXM46UVMZ", heatingKW: 5.4, cop: "N/A", eer: "N/A" },
+      { model: "FTXM50UVMZ", heatingKW: 6.1, cop: "N/A", eer: "N/A" },
+      { model: "FTXM60UVMZ", heatingKW: 7.3, cop: "N/A", eer: "N/A" },
+      { model: "FTXM71UVMZ", heatingKW: 8.1, cop: "N/A", eer: "N/A" },
+      { model: "FTXM85PAVMA", heatingKW: 9.0, cop: "N/A", eer: "N/A" },
+      { model: "FTXM95PAVMA", heatingKW: 10.3, cop: "N/A", eer: "N/A" }
     ];
 
+    // Adding full Fujitsu models including the higher capacities
+    const fujitsuModels = [
+      { model: "ASTH07KNCA", heatingKW: 2.5, cop: "N/A", eer: "N/A" },
+      { model: "ASTH09KNCA", heatingKW: 3.2, cop: "N/A", eer: "N/A" },
+      { model: "ASTH12KNCA", heatingKW: 4.0, cop: "N/A", eer: "N/A" },
+      { model: "ASTH14KNCA", heatingKW: 4.7, cop: "N/A", eer: "N/A" },
+      { model: "ASTH18KNTA", heatingKW: 5.2, cop: "N/A", eer: "N/A" },
+      { model: "ASTH22KNTA", heatingKW: 6.5, cop: "N/A", eer: "N/A" },
+      { model: "ASTH24KNTA", heatingKW: 8.0, cop: "N/A", eer: "N/A" },
+      { model: "ASTH30KNTA", heatingKW: 9.0, cop: "N/A", eer: "N/A" },
+      { model: "ASTH34KNTA", heatingKW: 10.3, cop: "N/A", eer: "N/A" }
+    ];
+
+    // Find the first model that meets or exceeds the calculated heating requirement
     const firstMitsubishi = mitsubishiModels.find(model => model.heatingKW >= heatingKW);
     const firstCora = coraModels.find(model => model.heatingKW >= heatingKW);
+    const firstFujitsu = fujitsuModels.find(model => model.heatingKW >= heatingKW);
 
     let recommendations = '';
+
+    // Add Mitsubishi recommendation
     if (firstMitsubishi) {
       recommendations += `
         <details style="background: #eee; padding: 12px; border-radius: 6px; margin-bottom: 15px;">
-          <summary style="cursor: pointer; font-weight: bold;">${firstMitsubishi.model}</summary>
-          <p style="margin-top: 10px;">Heating: ${firstMitsubishi.heatingKW} kW <br> Suitable for your space. <br><a href="#">View Product</a></p>
-        </details>
-      `;
-    }
-    if (firstCora) {
-      recommendations += `
-        <details style="background: #eee; padding: 12px; border-radius: 6px; margin-bottom: 15px;">
-          <summary style="cursor: pointer; font-weight: bold;">${firstCora.model}</summary>
-          <p style="margin-top: 10px;">Heating: ${firstCora.heatingKW} kW <br> Suitable for your space. <br><a href="#">View Product</a></p>
+          <summary style="cursor: pointer; font-weight: bold;">${firstMitsubishi.model} (Mitsubishi Electric)</summary>
+          <p style="margin-top: 10px;">Heating Capacity: ${firstMitsubishi.heatingKW} kW <br> COP: ${firstMitsubishi.cop !== "N/A" ? firstMitsubishi.cop : ''} <br> EER: ${firstMitsubishi.eer !== "N/A" ? firstMitsubishi.eer : ''} <br> Suitable for your space. <br><a href="#">View Product</a></p>
         </details>
       `;
     }
 
+    // Add Cora recommendation
+    if (firstCora) {
+      recommendations += `
+        <details style="background: #eee; padding: 12px; border-radius: 6px; margin-bottom: 15px;">
+          <summary style="cursor: pointer; font-weight: bold;">${firstCora.model} (Daikin Cora)</summary>
+          <p style="margin-top: 10px;">Heating Capacity: ${firstCora.heatingKW} kW <br> COP: ${firstCora.cop !== "N/A" ? firstCora.cop : ''} <br> EER: ${firstCora.eer !== "N/A" ? firstCora.eer : ''} <br> Suitable for your space. <br><a href="#">View Product</a></p>
+        </details>
+      `;
+    }
+
+    // Add Fujitsu recommendation
+    if (firstFujitsu) {
+      recommendations += `
+        <details style="background: #eee; padding: 12px; border-radius: 6px; margin-bottom: 15px;">
+          <summary style="cursor: pointer; font-weight: bold;">${firstFujitsu.model} (Fujitsu)</summary>
+          <p style="margin-top: 10px;">Heating Capacity: ${firstFujitsu.heatingKW} kW <br> COP: ${firstFujitsu.cop !== "N/A" ? firstFujitsu.cop : ''} <br> EER: ${firstFujitsu.eer !== "N/A" ? firstFujitsu.eer : ''} <br> Suitable for your space. <br><a href="#">View Product</a></p>
+        </details>
+      `;
+    }
+
+    // If no models match, show this message
+    if (!firstMitsubishi && !firstCora && !firstFujitsu) {
+      recommendations = `<p style="color: red; font-weight: bold;">Your heating requirements exceed the available products listed here. Please contact us for a tailored solution, including ducted systems and larger capacity units.</p>`;
+    }
+
+    // Display the results
     document.getElementById('result').innerHTML = `
       <p><strong>Room Volume:</strong> ${volume.toFixed(2)} m³</p>
-      <p><strong>Heating:</strong> ${heatingKW} kW</p>
+      <p><strong>Heating Capacity:</strong> ${heatingKW} kW</p>
 
       <h4 style="margin-top: 25px;">Recommended Models</h4>
       ${recommendations}
 
-      <h4 style="margin-top: 25px;">If you have any questions or would like a quote, <a href="https://chillair.co.nz/#contact" style="color: #007AC1; text-decoration: none; font-weight: bold;">click here</a>.</h4>
+      <p style="margin-top: 30px;">If you have any questions or would like a quote, please use the adjacent form and we will do our very best to help you out.</p>
     `;
   }
 </script>
