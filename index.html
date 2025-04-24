@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Heat Pump Calculator</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y0L8T6CDES"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -37,7 +36,7 @@
         <input type="number" id="height" step="0.1" style="width: 100%; padding: 12px; margin-top: 8px; border-radius: 10px; border: 1px solid #ccc;">
       </label>
 
-      <label style="display: block; margin-bottom: 20px;">
+      <label style="display: block; margin-bottom: 30px;">
         <i class="fas fa-home" style="margin-right: 8px; color: #007AC1;"></i> House Type
         <select id="houseType" style="width: 100%; padding: 12px; margin-top: 8px; border-radius: 10px; border: 1px solid #ccc;">
           <option value="new">New house (2016+)</option>
@@ -54,9 +53,8 @@
         </select>
       </label>
 
-      <button onclick="calculate()" style="width: 100%; padding: 14px 18px; background: #007AC1; color: white; font-size: 16px; font-weight: 600; border: none; border-radius: 12px; cursor: pointer; transition: background 0.3s;">
-        <i class="fas fa-calculator" style="margin-right: 10px;"></i>Calculate
-      </button>
+      <!-- Checkboxes will now appear in place of the button -->
+      <div id="checkboxes-container"></div>
     </div>
 
     <!-- Results Section -->
@@ -68,6 +66,16 @@
   </div>
 
   <script>
+    // Store initial results for later use
+    let initialResults = {};
+
+    // Attach event listeners for real-time updates
+    document.getElementById('length').addEventListener('input', calculate);
+    document.getElementById('width').addEventListener('input', calculate);
+    document.getElementById('height').addEventListener('input', calculate);
+    document.getElementById('houseType').addEventListener('change', calculate);
+    document.getElementById('insulation').addEventListener('change', calculate);
+
     function calculate() {
       const length = parseFloat(document.getElementById('length').value);
       const width = parseFloat(document.getElementById('width').value);
@@ -137,9 +145,37 @@
     { model: "ASTH30KMTD", heatingKW: 9.0, coolingKW: 8.5, cop: 3.77, eer: 3.41 },
     { model: "ASTG34KMTC", heatingKW: 10.3, coolingKW: 9.4, cop: 3.63, eer: 3.38 },
     { model: "ASTH34KMTD", heatingKW: 10.3, coolingKW: 9.5, cop: 3.39, eer: 3.49 }
-          ]
-        }
-      ];
+            ]
+        },
+        {
+          name: "Fujitsu Standard",
+    models: [
+      { model: "ASTH07KNCA", heatingKW: 2.5, coolingKW: 2.0, cop: 3.97, eer: 4.17 },
+      { model: "ASTH09KNCA", heatingKW: 3.2, coolingKW: 2.5, cop: 4.16, eer: 4.24 },
+      { model: "ASTH12KNCA", heatingKW: 4.0, coolingKW: 3.4, cop: 4.00, eer: 3.54 },
+      { model: "ASTH14KNCA", heatingKW: 4.7, coolingKW: 4.2, cop: 4.16, eer: 3.41 },
+      { model: "ASTH18KNTA", heatingKW: 5.2, coolingKW: 5.0, cop: 3.91, eer: 3.47 },
+      { model: "ASTH22KNTA", heatingKW: 6.5, coolingKW: 6.0, cop: 3.51, eer: 3.37 },
+      { model: "ASTH24KNTA", heatingKW: 8.0, coolingKW: 7.1, cop: 3.85, eer: 3.23 },
+      { model: "ASTH30KNTA", heatingKW: 9.0, coolingKW: 8.5, cop: 3.77, eer: 3.41 },
+      { model: "ASTH34KNTA", heatingKW: 10.3, coolingKW: 9.5, cop: 3.39, eer: 3.49 }
+    ]
+  },
+  {
+    name: "Daikin Standard",
+    models: [
+      { model: "FTXV20UVMA", heatingKW: 2.7, coolingKW: 2.0, cop: 4.58, eer: 4.65 },
+      { model: "FTXV25UVMA", heatingKW: 3.2, coolingKW: 2.5, cop: 4.92, eer: 4.81 },
+      { model: "FTXV35UVMA", heatingKW: 3.7, coolingKW: 3.5, cop: 4.68, eer: 3.98 },
+      { model: "FTXV46UVMA", heatingKW: 4.7, coolingKW: 4.6, cop: 3.98, eer: 3.77 },
+      { model: "FTXV50UVMA", heatingKW: 6.0, coolingKW: 5.0, cop: 4.20, eer: 3.91 },
+      { model: "FTXV60UVMA", heatingKW: 7.2, coolingKW: 6.0, cop: 4.16, eer: 3.66 },
+      { model: "FTXV71UVMA", heatingKW: 8.0, coolingKW: 7.1, cop: 3.94, eer: 3.57 },
+      { model: "FTXV80WVMA", heatingKW: 9.0, coolingKW: 8.0, cop: 3.27, eer: 3.69 },
+      { model: "FTXV90WVMA", heatingKW: 10.3, coolingKW: 9.0, cop: 3.27, eer: 3.40 }
+    ]
+  }
+];
 
       const recommendations = [];
 
@@ -154,6 +190,12 @@
       }
 
       recommendations.sort((a, b) => b.cop - a.cop);
+
+      initialResults = {
+        volume,
+        heatingKW,
+        recommendations
+      };
 
       let output = `
       <p style="margin-top: 30px; color: #666;">
@@ -170,7 +212,7 @@
         recommendations.forEach((rec, index) => {
           const openStatus = index === 0 ? 'open' : '';
           output += `
-            <details ${openStatus} style="background: #f9f9f9; padding: 12px 18px; border-radius: 10px; margin-bottom: 20px;">
+            <details id="model-${index}" ${openStatus} style="background: #f9f9f9; padding: 12px 18px; border-radius: 10px; margin-bottom: 20px;">
               <summary style="cursor: pointer; font-weight: 600; font-size: 16px;">
                 <i class="fas fa-snowflake" style="margin-right: 10px; color: #007AC1;"></i>${rec.model} <span style="color: #555;">(${rec.brand})</span>
               </summary>
@@ -185,9 +227,85 @@
         });
       }
 
-      output += `<p style="margin-top: 30px; color: #666;"><i class="fas fa-envelope-open-text"></i> Have any questions or want a quote? Use the adjacent form to get in touch, we're here to help!</p>`;
       document.getElementById('result').innerHTML = output;
+      addCheckboxes(recommendations);
+      checkAndOpenFirstModel();
     }
+
+    // Add checkboxes for each recommended model
+    function addCheckboxes(recommendations) {
+      let checkboxesOutput = '<h4>Select Models</h4>';
+      recommendations.forEach((rec, index) => {
+        checkboxesOutput += `
+          <label style="display: block; margin-bottom: 10px;">
+            <input type="checkbox" id="modelCheckbox-${index}" value="${rec.model}" checked onchange="updateResults()"> ${rec.model} (${rec.brand})
+          </label>
+        `;
+      });
+      document.getElementById('checkboxes-container').innerHTML = checkboxesOutput;
+    }
+
+    // Update results based on selected checkboxes
+    function updateResults() {
+      const selectedModels = [];
+      const checkboxes = document.querySelectorAll('#checkboxes-container input[type="checkbox"]:checked');
+      
+      checkboxes.forEach(checkbox => {
+        selectedModels.push(checkbox.value);
+      });
+
+      // If no models are selected, keep the initial results intact
+      if (selectedModels.length === 0) {
+        document.getElementById('result').innerHTML = `
+          <p><strong><i class="fas fa-cube"></i> Room Volume:</strong> ${initialResults.volume} m³</p>
+          <p><strong><i class="fas fa-fire"></i> Heating Capacity Required:</strong> ${initialResults.heatingKW} kW</p>
+          <h4><i class="fas fa-thumbs-up"></i> Recommended Models (Sorted by Best COP)</h4>
+          <p style="color: red; font-weight: bold;">No models selected. Please select a model to see more details.</p>
+        `;
+        addCheckboxes(initialResults.recommendations);
+        return;
+      }
+
+      // Filter recommendations based on selected models
+      const filteredRecommendations = initialResults.recommendations.filter(rec =>
+        selectedModels.includes(rec.model)
+      );
+
+      let output = `
+        <h4>Selected Models</h4>
+        <p>${selectedModels.join(', ')}</p>
+      `;
+
+      filteredRecommendations.forEach((rec, index) => {
+        output += `
+          <details id="model-${index}" style="background: #f9f9f9; padding: 12px 18px; border-radius: 10px; margin-bottom: 20px;">
+            <summary style="cursor: pointer; font-weight: 600; font-size: 16px;">
+              <i class="fas fa-snowflake" style="margin-right: 10px; color: #007AC1;"></i>${rec.model} <span style="color: #555;">(${rec.brand})</span>
+            </summary>
+            <p style="margin-top: 10px; padding-left: 10px;">
+              Heating Capacity: ${rec.heatingKW} kW <br>
+              Cooling Capacity: ${rec.coolingKW} kW <br>
+              COP: ${rec.cop} | EER: ${rec.eer} <br>
+              <a href="#" style="color: #007AC1;">View Product</a>
+            </p>
+          </details>
+        `;
+      });
+
+      document.getElementById('result').innerHTML = output;
+      checkAndOpenFirstModel();
+    }
+
+    function checkAndOpenFirstModel() {
+      const firstModelDetails = document.querySelector('details');
+      if (firstModelDetails) {
+        firstModelDetails.setAttribute('open', true);
+      }
+    }
+
+    // Initial calculation trigger
+    calculate();
   </script>
+
 </body>
 </html>
