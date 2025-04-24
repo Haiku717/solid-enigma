@@ -53,7 +53,17 @@
         </select>
       </label>
 
-      <!-- Checkboxes will now appear in place of the button -->
+      <button id="calculateButton" onclick="calculate()" style="padding: 10px 15px; background: #007AC1; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 10px;">
+        <i class="fas fa-calculator"></i> Calculate
+      </button>
+      
+      <div style="margin-top: 20px;">
+        <label style="display: flex; align-items: center; gap: 10px;">
+          <input type="checkbox" id="realtimeToggle" checked>
+          <span>Enable Real-Time Updates</span>
+        </label>
+      </div>
+
       <div id="checkboxes-container"></div>
     </div>
 
@@ -66,81 +76,73 @@
   </div>
 
   <script>
-  let initialResults = {};
-  let isRealTimeEnabled = true; // Track if real-time updates are enabled
+    let realTimeEnabled = true; // Track the real-time update state
 
-  // Attach event listeners for input fields (only when real-time updates are enabled)
-  document.getElementById('length').addEventListener('input', handleInputChange);
-  document.getElementById('width').addEventListener('input', handleInputChange);
-  document.getElementById('height').addEventListener('input', handleInputChange);
-  document.getElementById('houseType').addEventListener('change', handleInputChange);
-  document.getElementById('insulation').addEventListener('change', handleInputChange);
+    // Event listeners for inputs
+    document.getElementById('length').addEventListener('input', handleInput);
+    document.getElementById('width').addEventListener('input', handleInput);
+    document.getElementById('height').addEventListener('input', handleInput);
+    document.getElementById('houseType').addEventListener('change', handleInput);
+    document.getElementById('insulation').addEventListener('change', handleInput);
+    document.getElementById('realtimeToggle').addEventListener('change', toggleRealTimeUpdates);
 
-  // Toggle real-time updates based on checkbox state
-  document.getElementById('realTimeToggle').addEventListener('change', function() {
-    isRealTimeEnabled = this.checked;
-    if (isRealTimeEnabled) {
-      // Enable real-time updates
-      enableRealTimeUpdates();
-    } else {
-      // Disable real-time updates
-      disableRealTimeUpdates();
-    }
-  });
-
-  // Function to enable real-time updates
-  function enableRealTimeUpdates() {
-    document.getElementById('length').addEventListener('input', calculate);
-    document.getElementById('width').addEventListener('input', calculate);
-    document.getElementById('height').addEventListener('input', calculate);
-    document.getElementById('houseType').addEventListener('change', calculate);
-    document.getElementById('insulation').addEventListener('change', calculate);
-  }
-
-  // Function to disable real-time updates
-  function disableRealTimeUpdates() {
-    document.getElementById('length').removeEventListener('input', calculate);
-    document.getElementById('width').removeEventListener('input', calculate);
-    document.getElementById('height').removeEventListener('input', calculate);
-    document.getElementById('houseType').removeEventListener('change', calculate);
-    document.getElementById('insulation').removeEventListener('change', calculate);
-  }
-
-  // Input change handler
-  function handleInputChange() {
-    // Only trigger calculation if real-time updates are enabled
-    if (isRealTimeEnabled) {
-      calculate();
-    }
-  }
-
-  // Calculate results
-  function calculate() {
-    const length = parseFloat(document.getElementById('length').value);
-    const width = parseFloat(document.getElementById('width').value);
-    const height = parseFloat(document.getElementById('height').value);
-    const houseType = document.getElementById('houseType').value;
-    const insulation = document.getElementById('insulation').value;
-
-    if (isNaN(length) || isNaN(width) || isNaN(height)) {
-      document.getElementById('result').innerHTML = '<p style="color: red;">Please enter valid room dimensions.</p>';
-      return;
+    function toggleRealTimeUpdates() {
+      realTimeEnabled = document.getElementById('realtimeToggle').checked;
+      if (realTimeEnabled) {
+        addRealTimeListeners();
+      } else {
+        removeRealTimeListeners();
+      }
     }
 
-    document.getElementById('result').innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Calculating...</p>';
-
-    const volume = length * width * height;
-
-    let heatingW = 50;
-    if (houseType === 'new') {
-      heatingW = insulation === 'good' ? 50 : insulation === 'average' ? 55 : 60;
-    } else {
-      heatingW = insulation === 'good' ? 55 : insulation === 'average' ? 65 : 70;
+    function addRealTimeListeners() {
+      document.getElementById('length').addEventListener('input', calculate);
+      document.getElementById('width').addEventListener('input', calculate);
+      document.getElementById('height').addEventListener('input', calculate);
+      document.getElementById('houseType').addEventListener('change', calculate);
+      document.getElementById('insulation').addEventListener('change', calculate);
     }
 
-    const heatingKW = (volume * heatingW / 1000).toFixed(2);
+    function removeRealTimeListeners() {
+      document.getElementById('length').removeEventListener('input', calculate);
+      document.getElementById('width').removeEventListener('input', calculate);
+      document.getElementById('height').removeEventListener('input', calculate);
+      document.getElementById('houseType').removeEventListener('change', calculate);
+      document.getElementById('insulation').removeEventListener('change', calculate);
+    }
 
-    const brands = [
+    function handleInput() {
+      if (realTimeEnabled) {
+        calculate();
+      }
+    }
+
+    function calculate() {
+      const length = parseFloat(document.getElementById('length').value);
+      const width = parseFloat(document.getElementById('width').value);
+      const height = parseFloat(document.getElementById('height').value);
+      const houseType = document.getElementById('houseType').value;
+      const insulation = document.getElementById('insulation').value;
+
+      if (isNaN(length) || isNaN(width) || isNaN(height)) {
+        document.getElementById('result').innerHTML = '<p style="color: red;">Please enter valid room dimensions.</p>';
+        return;
+      }
+
+      document.getElementById('result').innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Calculating...</p>';
+
+      const volume = length * width * height;
+
+      let heatingW = 50;
+      if (houseType === 'new') {
+        heatingW = insulation === 'good' ? 50 : insulation === 'average' ? 55 : 60;
+      } else {
+        heatingW = insulation === 'good' ? 55 : insulation === 'average' ? 65 : 70;
+      }
+
+      const heatingKW = (volume * heatingW / 1000).toFixed(2);
+
+      const brands = [
         {
           name: "Mitsubishi Electric AP series",
           models: [
@@ -276,18 +278,6 @@
   function addCheckboxes(recommendations) {
     let checkboxesOutput = '<h4>Select Model Range</h4>';
     const brands = [...new Set(recommendations.map(rec => rec.brand))]; // Get unique brand names
-    
-    checkboxesOutput += `
-      <button id="calculateButton" onclick="calculate()" style="padding: 10px 15px; background: #007AC1; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 10px;">
-        <i class="fas fa-calculator"></i> Calculate
-      </button>
-    `;
-
-    checkboxesOutput += `
-      <label style="display: block; margin-bottom: 10px;">
-        <input type="checkbox" id="realTimeToggle" checked> Enable Real-Time Updates
-      </label>
-    `;
     
     const selectedBrands = [...new Set(recommendations.map(rec => rec.brand))]; // Get unique brand names
     
