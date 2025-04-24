@@ -66,42 +66,81 @@
   </div>
 
   <script>
-    // Store initial results for later use
-    let initialResults = {};
+  let initialResults = {};
+  let isRealTimeEnabled = true; // Track if real-time updates are enabled
 
-    // Attach event listeners for real-time updates
+  // Attach event listeners for input fields (only when real-time updates are enabled)
+  document.getElementById('length').addEventListener('input', handleInputChange);
+  document.getElementById('width').addEventListener('input', handleInputChange);
+  document.getElementById('height').addEventListener('input', handleInputChange);
+  document.getElementById('houseType').addEventListener('change', handleInputChange);
+  document.getElementById('insulation').addEventListener('change', handleInputChange);
+
+  // Toggle real-time updates based on checkbox state
+  document.getElementById('realTimeToggle').addEventListener('change', function() {
+    isRealTimeEnabled = this.checked;
+    if (isRealTimeEnabled) {
+      // Enable real-time updates
+      enableRealTimeUpdates();
+    } else {
+      // Disable real-time updates
+      disableRealTimeUpdates();
+    }
+  });
+
+  // Function to enable real-time updates
+  function enableRealTimeUpdates() {
     document.getElementById('length').addEventListener('input', calculate);
     document.getElementById('width').addEventListener('input', calculate);
     document.getElementById('height').addEventListener('input', calculate);
     document.getElementById('houseType').addEventListener('change', calculate);
     document.getElementById('insulation').addEventListener('change', calculate);
+  }
 
-    function calculate() {
-      const length = parseFloat(document.getElementById('length').value);
-      const width = parseFloat(document.getElementById('width').value);
-      const height = parseFloat(document.getElementById('height').value);
-      const houseType = document.getElementById('houseType').value;
-      const insulation = document.getElementById('insulation').value;
+  // Function to disable real-time updates
+  function disableRealTimeUpdates() {
+    document.getElementById('length').removeEventListener('input', calculate);
+    document.getElementById('width').removeEventListener('input', calculate);
+    document.getElementById('height').removeEventListener('input', calculate);
+    document.getElementById('houseType').removeEventListener('change', calculate);
+    document.getElementById('insulation').removeEventListener('change', calculate);
+  }
 
-      if (isNaN(length) || isNaN(width) || isNaN(height)) {
-        document.getElementById('result').innerHTML = '<p style="color: red;">Please enter valid room dimensions.</p>';
-        return;
-      }
+  // Input change handler
+  function handleInputChange() {
+    // Only trigger calculation if real-time updates are enabled
+    if (isRealTimeEnabled) {
+      calculate();
+    }
+  }
 
-      document.getElementById('result').innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Calculating...</p>';
+  // Calculate results
+  function calculate() {
+    const length = parseFloat(document.getElementById('length').value);
+    const width = parseFloat(document.getElementById('width').value);
+    const height = parseFloat(document.getElementById('height').value);
+    const houseType = document.getElementById('houseType').value;
+    const insulation = document.getElementById('insulation').value;
 
-      const volume = length * width * height;
+    if (isNaN(length) || isNaN(width) || isNaN(height)) {
+      document.getElementById('result').innerHTML = '<p style="color: red;">Please enter valid room dimensions.</p>';
+      return;
+    }
 
-      let heatingW = 50;
-      if (houseType === 'new') {
-        heatingW = insulation === 'good' ? 50 : insulation === 'average' ? 55 : 60;
-      } else {
-        heatingW = insulation === 'good' ? 55 : insulation === 'average' ? 65 : 70;
-      }
+    document.getElementById('result').innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Calculating...</p>';
 
-      const heatingKW = (volume * heatingW / 1000).toFixed(2);
+    const volume = length * width * height;
 
-      const brands = [
+    let heatingW = 50;
+    if (houseType === 'new') {
+      heatingW = insulation === 'good' ? 50 : insulation === 'average' ? 55 : 60;
+    } else {
+      heatingW = insulation === 'good' ? 55 : insulation === 'average' ? 65 : 70;
+    }
+
+    const heatingKW = (volume * heatingW / 1000).toFixed(2);
+
+    const brands = [
         {
           name: "Mitsubishi Electric AP series",
           models: [
@@ -177,108 +216,43 @@
   }
 ];
 
-      const recommendations = [];
+    
+    const recommendations = [];
 
-      for (const brand of brands) {
-        const suitableModels = brand.models.filter(m => m.heatingKW >= heatingKW);
-        if (suitableModels.length > 0) {
-          const bestMatch = suitableModels.reduce((prev, curr) =>
-            curr.heatingKW < prev.heatingKW ? curr : prev
-          );
-          recommendations.push({ brand: brand.name, ...bestMatch });
-        }
+    for (const brand of brands) {
+      const suitableModels = brand.models.filter(m => m.heatingKW >= heatingKW);
+      if (suitableModels.length > 0) {
+        const bestMatch = suitableModels.reduce((prev, curr) =>
+          curr.heatingKW < prev.heatingKW ? curr : prev
+        );
+        recommendations.push({ brand: brand.name, ...bestMatch });
       }
-
-      recommendations.sort((a, b) => b.cop - a.cop);
-
-      initialResults = {
-        volume,
-        heatingKW,
-        recommendations
-      };
-
-      let output = `
-      <p style="margin-top: 30px; color: #666;">
-        <i class="fas fa-envelope-open-text"></i> Have any questions or want a quote? Use the adjacent form to get in touch, we're here to help!
-      </p>
-      <p><strong><i class="fas fa-cube"></i> Room Volume:</strong> ${volume.toFixed(2)} m³</p>
-        <p><strong><i class="fas fa-fire"></i> Heating Capacity Required:</strong> ${heatingKW} kW</p>
-        <h4 style="margin-top: 25px;"><i class="fas fa-thumbs-up"></i> Recommended Models (Sorted by Best COP)</h4>
-      `;
-
-      if (recommendations.length === 0) {
-        output += `<p style="color: red; font-weight: bold;">No suitable models found. Please contact us for a custom solution.</p>`;
-      } else {
-        recommendations.forEach((rec, index) => {
-          const openStatus = index === 0 ? 'open' : '';
-          output += `
-            <details id="model-${index}" ${openStatus} style="background: #f9f9f9; padding: 12px 18px; border-radius: 10px; margin-bottom: 20px;">
-              <summary style="cursor: pointer; font-weight: 600; font-size: 16px;">
-                <i class="fas fa-snowflake" style="margin-right: 10px; color: #007AC1;"></i>${rec.model} <span style="color: #555;">(${rec.brand})</span>
-              </summary>
-              <p style="margin-top: 10px; padding-left: 10px;">
-                Heating Capacity: ${rec.heatingKW} kW <br>
-                Cooling Capacity: ${rec.coolingKW} kW <br>
-                COP: ${rec.cop} | EER: ${rec.eer} <br>
-                <a href="#" style="color: #007AC1;">View Product</a>
-              </p>
-            </details>
-          `;
-        });
-      }
-
-      document.getElementById('result').innerHTML = output;
-      addCheckboxes(recommendations);
-      checkAndOpenFirstModel();
     }
 
-    // Add checkboxes for each recommended model
-    function addCheckboxes(recommendations) {
-      let checkboxesOutput = '<h4>Select Models</h4>';
+    recommendations.sort((a, b) => b.cop - a.cop);
+
+    initialResults = {
+      volume,
+      heatingKW,
+      recommendations
+    };
+
+    let output = `
+    <p style="margin-top: 30px; color: #666;">
+      <i class="fas fa-envelope-open-text"></i> Have any questions or want a quote? Use the adjacent form to get in touch, we're here to help!
+    </p>
+    <p><strong><i class="fas fa-cube"></i> Room Volume:</strong> ${volume.toFixed(2)} m³</p>
+      <p><strong><i class="fas fa-fire"></i> Heating Capacity Required:</strong> ${heatingKW} kW</p>
+      <h4 style="margin-top: 25px;"><i class="fas fa-thumbs-up"></i> Recommended Models (Sorted by Best COP)</h4>
+    `;
+
+    if (recommendations.length === 0) {
+      output += `<p style="color: red; font-weight: bold;">No suitable models found. Please contact us for a custom solution.</p>`;
+    } else {
       recommendations.forEach((rec, index) => {
-        checkboxesOutput += `
-          <label style="display: block; margin-bottom: 10px;">
-            <input type="checkbox" id="modelCheckbox-${index}" value="${rec.model}" checked onchange="updateResults()"> ${rec.model} (${rec.brand})
-          </label>
-        `;
-      });
-      document.getElementById('checkboxes-container').innerHTML = checkboxesOutput;
-    }
-
-    // Update results based on selected checkboxes
-    function updateResults() {
-      const selectedModels = [];
-      const checkboxes = document.querySelectorAll('#checkboxes-container input[type="checkbox"]:checked');
-      
-      checkboxes.forEach(checkbox => {
-        selectedModels.push(checkbox.value);
-      });
-
-      // If no models are selected, keep the initial results intact
-      if (selectedModels.length === 0) {
-        document.getElementById('result').innerHTML = `
-          <p><strong><i class="fas fa-cube"></i> Room Volume:</strong> ${initialResults.volume} m³</p>
-          <p><strong><i class="fas fa-fire"></i> Heating Capacity Required:</strong> ${initialResults.heatingKW} kW</p>
-          <h4><i class="fas fa-thumbs-up"></i> Recommended Models (Sorted by Best COP)</h4>
-          <p style="color: red; font-weight: bold;">No models selected. Please select a model to see more details.</p>
-        `;
-        addCheckboxes(initialResults.recommendations);
-        return;
-      }
-
-      // Filter recommendations based on selected models
-      const filteredRecommendations = initialResults.recommendations.filter(rec =>
-        selectedModels.includes(rec.model)
-      );
-
-      let output = `
-        <h4>Selected Models</h4>
-        <p>${selectedModels.join(', ')}</p>
-      `;
-
-      filteredRecommendations.forEach((rec, index) => {
+        const openStatus = index === 0 ? 'open' : '';
         output += `
-          <details id="model-${index}" style="background: #f9f9f9; padding: 12px 18px; border-radius: 10px; margin-bottom: 20px;">
+          <details id="model-${index}" ${openStatus} style="background: #f9f9f9; padding: 12px 18px; border-radius: 10px; margin-bottom: 20px;">
             <summary style="cursor: pointer; font-weight: 600; font-size: 16px;">
               <i class="fas fa-snowflake" style="margin-right: 10px; color: #007AC1;"></i>${rec.model} <span style="color: #555;">(${rec.brand})</span>
             </summary>
@@ -291,21 +265,103 @@
           </details>
         `;
       });
-
-      document.getElementById('result').innerHTML = output;
-      checkAndOpenFirstModel();
     }
 
-    function checkAndOpenFirstModel() {
-      const firstModelDetails = document.querySelector('details');
-      if (firstModelDetails) {
-        firstModelDetails.setAttribute('open', true);
-      }
+    document.getElementById('result').innerHTML = output;
+    addCheckboxes(recommendations);
+    checkAndOpenFirstModel();
+  }
+
+  // Add checkboxes for each model range
+  function addCheckboxes(recommendations) {
+    let checkboxesOutput = '<h4>Select Model Range</h4>';
+    const brands = [...new Set(recommendations.map(rec => rec.brand))]; // Get unique brand names
+    
+    checkboxesOutput += `
+      <button id="calculateButton" onclick="calculate()" style="padding: 10px 15px; background: #007AC1; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 10px;">
+        <i class="fas fa-calculator"></i> Calculate
+      </button>
+    `;
+
+    checkboxesOutput += `
+      <label style="display: block; margin-bottom: 10px;">
+        <input type="checkbox" id="realTimeToggle" checked> Enable Real-Time Updates
+      </label>
+    `;
+    
+    const selectedBrands = [...new Set(recommendations.map(rec => rec.brand))]; // Get unique brand names
+    
+    selectedBrands.forEach((brand, index) => {
+      checkboxesOutput += `
+        <label style="display: block; margin-bottom: 10px;">
+          <input type="checkbox" id="brandCheckbox-${index}" value="${brand}" checked onchange="updateResults()"> ${brand}
+        </label>
+      `;
+    });
+
+    document.getElementById('checkboxes-container').innerHTML = checkboxesOutput;
+  }
+
+  // Update results based on selected model ranges
+  function updateResults() {
+    const selectedBrands = [];
+    const checkboxes = document.querySelectorAll('#checkboxes-container input[type="checkbox"]:checked');
+    
+    checkboxes.forEach(checkbox => {
+      selectedBrands.push(checkbox.value);
+    });
+
+    if (selectedBrands.length === 0) {
+      document.getElementById('result').innerHTML = `
+        <p><strong><i class="fas fa-cube"></i> Room Volume:</strong> ${initialResults.volume} m³</p>
+        <p><strong><i class="fas fa-fire"></i> Heating Capacity Required:</strong> ${initialResults.heatingKW} kW</p>
+        <h4><i class="fas fa-thumbs-up"></i> Recommended Models (Sorted by Best COP)</h4>
+        <p style="color: red; font-weight: bold;">No models selected. Please select a brand to see more details.</p>
+      `;
+      addCheckboxes(initialResults.recommendations);
+      return;
     }
 
-    // Initial calculation trigger
-    calculate();
-  </script>
+    const filteredRecommendations = initialResults.recommendations.filter(rec =>
+      selectedBrands.includes(rec.brand)
+    );
+
+    let output = `
+      <h4>Selected Model Ranges</h4>
+      <p>${selectedBrands.join(', ')}</p>
+    `;
+
+    filteredRecommendations.forEach((rec, index) => {
+      output += `
+        <details id="model-${index}" style="background: #f9f9f9; padding: 12px 18px; border-radius: 10px; margin-bottom: 20px;">
+          <summary style="cursor: pointer; font-weight: 600; font-size: 16px;">
+            <i class="fas fa-snowflake" style="margin-right: 10px; color: #007AC1;"></i>${rec.model} <span style="color: #555;">(${rec.brand})</span>
+          </summary>
+          <p style="margin-top: 10px; padding-left: 10px;">
+            Heating Capacity: ${rec.heatingKW} kW <br>
+            Cooling Capacity: ${rec.coolingKW} kW <br>
+            COP: ${rec.cop} | EER: ${rec.eer} <br>
+            <a href="#" style="color: #007AC1;">View Product</a>
+          </p>
+        </details>
+      `;
+    });
+
+    document.getElementById('result').innerHTML = output;
+    checkAndOpenFirstModel();
+  }
+
+  function checkAndOpenFirstModel() {
+    const firstModelDetails = document.querySelector('details');
+    if (firstModelDetails) {
+      firstModelDetails.setAttribute('open', true);
+    }
+  }
+
+  // Initial calculation trigger
+  calculate();
+</script>
+
 
 </body>
 </html>
