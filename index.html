@@ -20,7 +20,22 @@
       <h2 style="text-align: center; margin-bottom: 30px; color: #1f3f5b;">
         <i class="fas fa-ruler-combined" style="margin-right: 8px;"></i>Heat Pump Sizing Calculator
       </h2>
+      
+<div style="margin-top: 20px;">
+  <label style="display: flex; align-items: center; gap: 10px;">
+    <input type="checkbox" id="useCustomKW">
+    <span>Use custom heating requirement:</span>
+    <input type="number" id="customKW" placeholder="Enter kW" step="0.1" style="flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #ccc;">
+  </label>
+</div>
 
+      <div style="margin-top: 20px;">
+        <label style="display: flex; align-items: center; gap: 10px;">
+          <input type="checkbox" id="realtimeToggle" checked>
+          <span>Enable Auto Calculate</span>
+        </label>
+      </div>
+      
       <label style="display: block; margin-bottom: 20px;">
         <i class="fas fa-ruler-horizontal" style="margin-right: 8px; color: #007AC1;"></i> Room Length (m)
         <input type="number" id="length" step="0.1" style="width: 100%; padding: 12px; margin-top: 8px; border-radius: 10px; border: 1px solid #ccc;">
@@ -56,13 +71,6 @@
       <button id="calculateButton" onclick="calculate()" style="width: 50%; padding: 15px 75px; font-size: 25px; background: #007AC1; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 10px;">
         <i class="fas fa-calculator"></i> Calculate
       </button>
-      
-      <div style="margin-top: 20px;">
-        <label style="display: flex; align-items: center; gap: 10px;">
-          <input type="checkbox" id="realtimeToggle" checked>
-          <span>Enable Real-Time Updates</span>
-        </label>
-      </div>
 
       <div id="checkboxes-container"></div>
     </div>
@@ -76,6 +84,27 @@
   </div>
 
   <script>
+    
+    const customKWInput = document.getElementById('customKW');
+const useCustomKW = document.getElementById('useCustomKW');
+
+// Auto-check the box if the user types a value
+customKWInput.addEventListener('input', () => {
+  if (customKWInput.value.trim() !== '') {
+    useCustomKW.checked = true;
+    if (realTimeEnabled) calculate();
+  }
+});
+
+// Trigger recalculation if the box is manually toggled
+useCustomKW.addEventListener('change', () => {
+  if (!useCustomKW.checked && realTimeEnabled) {
+    calculate(); // revert to normal mode
+  } else if (customKWInput.value.trim() !== '' && realTimeEnabled) {
+    calculate(); // apply custom kW
+  }
+});
+
     let realTimeEnabled = true; // Track the real-time update state
 
     // Event listeners for inputs
@@ -124,23 +153,34 @@
       const houseType = document.getElementById('houseType').value;
       const insulation = document.getElementById('insulation').value;
 
-      if (isNaN(length) || isNaN(width) || isNaN(height)) {
-        document.getElementById('result').innerHTML = '<p style="color: red;">Please enter valid room dimensions.</p>';
-        return;
-      }
+      if ((!useCustomKW.checked || customKWInput.value.trim() === '') &&
+    (isNaN(length) || isNaN(width) || isNaN(height))) {
+  document.getElementById('result').innerHTML = '<p style="color: red;">Please enter valid room dimensions or enter a custom kW value.</p>';
+  return;
+}
 
       document.getElementById('result').innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Calculating...</p>';
 
       const volume = length * width * height;
 
-      let heatingW = 50;
-      if (houseType === 'new') {
-        heatingW = insulation === 'good' ? 50 : insulation === 'average' ? 55 : 60;
-      } else {
-        heatingW = insulation === 'good' ? 55 : insulation === 'average' ? 65 : 70;
-      }
+      let heatingKW;
+if (useCustomKW.checked && customKWInput.value.trim() !== '') {
+  heatingKW = parseFloat(customKWInput.value);
+} else {
+  const volume = length * width * height;
 
-      const heatingKW = (volume * heatingW / 1000).toFixed(2);
+  let heatingW = 50;
+  if (houseType === 'new') {
+    heatingW = insulation === 'good' ? 50 : insulation === 'average' ? 55 : 60;
+  } else {
+    heatingW = insulation === 'good' ? 55 : insulation === 'average' ? 65 : 70;
+  }
+
+  heatingKW = (volume * heatingW / 1000);
+}
+
+heatingKW = heatingKW.toFixed(2);
+
 
       const brands = [
         {
