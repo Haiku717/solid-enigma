@@ -185,77 +185,88 @@ function calculate() {
   heatingKW = heatingKW.toFixed(2);
   
       const brands = [
-        {
-          name: "Mitsubishi Electric AP series",
-          models: [
-            { model: "MSZ-AP25VGKD2", heatingKW: 3.2, coolingKW: 2.5, cop: 4.78, eer: 5.00 },
-            { model: "MSZ-AP35VGKD2", heatingKW: 3.7, coolingKW: 3.5, cop: 4.57, eer: 4.02 },
-            { model: "MSZ-AP42VGKD2", heatingKW: 5.4, coolingKW: 4.2, cop: 3.78, eer: 3.53 },
-            { model: "MSZ-AP50VGKD2", heatingKW: 6.0, coolingKW: 5.0, cop: 3.70, eer: 3.79 },
-            { model: "MSZ-AP60VGKD2", heatingKW: 6.8, coolingKW: 6.0, cop: 4.07, eer: 3.77 },
-            { model: "MSZ-AP71VGKD2", heatingKW: 8.0, coolingKW: 7.1, cop: 3.83, eer: 3.53 },
-            { model: "MSZ-AP80VGKD2", heatingKW: 9.0, coolingKW: 7.8, cop: 3.53, eer: 3.31 }
-          ]
-        },
-        {
-          name: "Daikin Cora",
-  models: [
-    { model: "FTXM20UVMZ", heatingKW: 2.8, coolingKW: 2.0, cop: 4.83, eer: 5.00, pipeSize: "6.4 / 9.5" },
-    { model: "FTXM25UVMZ", heatingKW: 3.3, coolingKW: 2.5, cop: 4.85, eer: 5.10, pipeSize: "6.4 / 9.5" },
-    { model: "FTXM35UVMZ", heatingKW: 4.0, coolingKW: 3.5, cop: 4.60, eer: 4.32, pipeSize: "6.4 / 9.5" },
-    { model: "FTXM46UVMZ", heatingKW: 5.4, coolingKW: 4.6, cop: 3.89, eer: 3.83, pipeSize: "6.4 / 12.7" },
-    { model: "FTXM50UVMZ", heatingKW: 6.1, coolingKW: 5.0, cop: 4.55, eer: 4.39, pipeSize: "6.4 / 12.7" },
-    { model: "FTXM60UVMZ", heatingKW: 7.3, coolingKW: 6.0, cop: 4.40, eer: 3.95, pipeSize: "6.4 / 12.7" },
-    { model: "FTXM71UVMZ", heatingKW: 8.1, coolingKW: 7.1, cop: 4.22, eer: 3.68, pipeSize: "6.4 / 15.9" },
-    { model: "FTXM85PAVMA", heatingKW: 9.0, coolingKW: 8.5, cop: 3.72, eer: 3.47, pipeSize: "6.4 / 15.9" },
-    { model: "FTXM95PAVMA", heatingKW: 10.3, coolingKW: 9.4, cop: 3.36, eer: 3.42, pipeSize: "6.4 / 15.9" }
-          ]
-        },
-        {
-          name: "Fujitsu Lifestyle",
-          models: [
-    { model: "ASTH07KMCD", heatingKW: 2.8, coolingKW: 2.0, cop: 4.83, eer: 5.00 },
-    { model: "ASTG09KMTC", heatingKW: 3.2, coolingKW: 2.5, cop: 4.84, eer: 4.71 },
-    { model: "ASTG12KMTC", heatingKW: 3.7, coolingKW: 3.5, cop: 4.68, eer: 3.93 },
-    { model: "ASTH14KMCD", heatingKW: 5.4, coolingKW: 4.2, cop: 3.86, eer: 3.65 },
-    { model: "ASTG18KMTC", heatingKW: 6.0, coolingKW: 5.0, cop: 4.69, eer: 4.31 },
-    { model: "ASTH18KMTD", heatingKW: 6.0, coolingKW: 5.0, cop: 4.69, eer: 4.31 },
-    { model: "ASTG22KMTC", heatingKW: 7.2, coolingKW: 6.0, cop: 4.24, eer: 3.80 },
-    { model: "ASTH22KMTD", heatingKW: 7.2, coolingKW: 6.0, cop: 4.24, eer: 3.80 },
-    { model: "ASTG24KMTC", heatingKW: 8.0, coolingKW: 7.1, cop: 4.19, eer: 3.41 },
-    { model: "ASTH24KMTD", heatingKW: 8.0, coolingKW: 7.1, cop: 4.19, eer: 3.41 },
-    { model: "ASTG30KMTC", heatingKW: 9.0, coolingKW: 8.5, cop: 3.84, eer: 3.45 },
-    { model: "ASTH30KMTD", heatingKW: 9.0, coolingKW: 8.5, cop: 3.77, eer: 3.41 },
-    { model: "ASTG34KMTC", heatingKW: 10.3, coolingKW: 9.4, cop: 3.63, eer: 3.38 },
-    { model: "ASTH34KMTD", heatingKW: 10.3, coolingKW: 9.5, cop: 3.39, eer: 3.49 }
-            ]
-        },
-        {
-          name: "Fujitsu Standard",
+  {
+    name: "Mitsubishi Electric AP series",
     models: [
-      { model: "ASTH07KNCA", heatingKW: 2.5, coolingKW: 2.0, cop: 3.97, eer: 4.17 },
-      { model: "ASTH09KNCA", heatingKW: 3.2, coolingKW: 2.5, cop: 4.16, eer: 4.24 },
-      { model: "ASTH12KNCA", heatingKW: 4.0, coolingKW: 3.4, cop: 4.00, eer: 3.54 },
-      { model: "ASTH14KNCA", heatingKW: 4.7, coolingKW: 4.2, cop: 4.16, eer: 3.41 },
-      { model: "ASTH18KNTA", heatingKW: 5.2, coolingKW: 5.0, cop: 3.91, eer: 3.47 },
-      { model: "ASTH22KNTA", heatingKW: 6.5, coolingKW: 6.0, cop: 3.51, eer: 3.37 },
-      { model: "ASTH24KNTA", heatingKW: 8.0, coolingKW: 7.1, cop: 3.85, eer: 3.23 },
-      { model: "ASTH30KNTA", heatingKW: 9.0, coolingKW: 8.5, cop: 3.77, eer: 3.41 },
-      { model: "ASTH34KNTA", heatingKW: 10.3, coolingKW: 9.5, cop: 3.39, eer: 3.49 }
+      { model: "MSZ-AP25VGKD2", heatingKW: 3.2, coolingKW: 2.5, cop: 4.78, eer: 5.00, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "MSZ-AP35VGKD2", heatingKW: 3.7, coolingKW: 3.5, cop: 4.57, eer: 4.02, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "MSZ-AP42VGKD2", heatingKW: 5.4, coolingKW: 4.2, cop: 3.78, eer: 3.53, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "MSZ-AP50VGKD2", heatingKW: 6.0, coolingKW: 5.0, cop: 3.70, eer: 3.79, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "MSZ-AP60VGKD2", heatingKW: 6.8, coolingKW: 6.0, cop: 4.07, eer: 3.77, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "MSZ-AP71VGKD2", heatingKW: 8.0, coolingKW: 7.1, cop: 3.83, eer: 3.53, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "MSZ-AP80VGKD2", heatingKW: 9.0, coolingKW: 7.8, cop: 3.53, eer: 3.31, pipeSize: "N/A", maxcurrent: "N/A" }
+    ]
+  },
+  {
+    name: "Daikin Cora",
+    models: [
+      { model: "FTXM20UVMZ", heatingKW: 2.8, coolingKW: 2.0, cop: 4.83, eer: 5.00, pipeSize: "6.4 / 9.5", maxcurrent: "N/A" },
+      { model: "FTXM25UVMZ", heatingKW: 3.3, coolingKW: 2.5, cop: 4.85, eer: 5.10, pipeSize: "6.4 / 9.5", maxcurrent: "N/A" },
+      { model: "FTXM35UVMZ", heatingKW: 4.0, coolingKW: 3.5, cop: 4.60, eer: 4.32, pipeSize: "6.4 / 9.5", maxcurrent: "N/A" },
+      { model: "FTXM46UVMZ", heatingKW: 5.4, coolingKW: 4.6, cop: 3.89, eer: 3.83, pipeSize: "6.4 / 12.7", maxcurrent: "N/A" },
+      { model: "FTXM50UVMZ", heatingKW: 6.1, coolingKW: 5.0, cop: 4.55, eer: 4.39, pipeSize: "6.4 / 12.7", maxcurrent: "N/A" },
+      { model: "FTXM60UVMZ", heatingKW: 7.3, coolingKW: 6.0, cop: 4.40, eer: 3.95, pipeSize: "6.4 / 12.7", maxcurrent: "N/A" },
+      { model: "FTXM71UVMZ", heatingKW: 8.1, coolingKW: 7.1, cop: 4.22, eer: 3.68, pipeSize: "6.4 / 15.9", maxcurrent: "N/A" },
+      { model: "FTXM85PAVMA", heatingKW: 9.0, coolingKW: 8.5, cop: 3.72, eer: 3.47, pipeSize: "6.4 / 15.9", maxcurrent: "N/A" },
+      { model: "FTXM95PAVMA", heatingKW: 10.3, coolingKW: 9.4, cop: 3.36, eer: 3.42, pipeSize: "6.4 / 15.9", maxcurrent: "N/A" }
+    ]
+  },
+  {
+    name: "Fujitsu Lifestyle",
+    models: [
+      { model: "ASTH07KMCD", heatingKW: 2.8, coolingKW: 2.0, cop: 4.83, eer: 5.00, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "ASTG09KMTC", heatingKW: 3.2, coolingKW: 2.5, cop: 4.84, eer: 4.71, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "ASTG12KMTC", heatingKW: 3.7, coolingKW: 3.5, cop: 4.68, eer: 3.93, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "ASTH14KMCD", heatingKW: 5.4, coolingKW: 4.2, cop: 3.86, eer: 3.65, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "ASTG18KMTC", heatingKW: 6.0, coolingKW: 5.0, cop: 4.69, eer: 4.31, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "ASTH18KMTD", heatingKW: 6.0, coolingKW: 5.0, cop: 4.69, eer: 4.31, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "ASTG22KMTC", heatingKW: 7.2, coolingKW: 6.0, cop: 4.24, eer: 3.80, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "ASTH22KMTD", heatingKW: 7.2, coolingKW: 6.0, cop: 4.24, eer: 3.80, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "ASTG24KMTC", heatingKW: 8.0, coolingKW: 7.1, cop: 4.19, eer: 3.41, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "ASTH24KMTD", heatingKW: 8.0, coolingKW: 7.1, cop: 4.19, eer: 3.41, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "ASTG30KMTC", heatingKW: 9.0, coolingKW: 8.5, cop: 3.84, eer: 3.45, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "ASTH30KMTD", heatingKW: 9.0, coolingKW: 8.5, cop: 3.77, eer: 3.41, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "ASTG34KMTC", heatingKW: 10.3, coolingKW: 9.4, cop: 3.63, eer: 3.38, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "ASTH34KMTD", heatingKW: 10.3, coolingKW: 9.5, cop: 3.39, eer: 3.49, pipeSize: "N/A", maxcurrent: "N/A" }
+    ]
+  },
+  {
+    name: "Daikin Aura",
+    models: [
+      { model: "FVXM25YVMA", coolingKW: 2.5, heatingKW: 3.5, eer: 5.00, cop: 4.61, maxcurrent: "N/A", pipeSize: "6.4 / 9.5" },
+      { model: "FVXM35YVMA", coolingKW: 3.5, heatingKW: 4.5, eer: 4.22, cop: 4.02, maxcurrent: "N/A", pipeSize: "6.4 / 9.5" },
+      { model: "FVXM45YVMA", coolingKW: 4.5, heatingKW: 5.4, eer: 3.38, cop: 3.75, maxcurrent: "N/A", pipeSize: "6.4 / 9.5" },
+      { model: "FVXM50YVMA", coolingKW: 5.0, heatingKW: 6.0, eer: 4.24, cop: 4.17, maxcurrent: "13.8", pipeSize: "6.4 / 12.7" },
+      { model: "FVXM60YVMA", coolingKW: 6.0, heatingKW: 7.0, eer: 3.61, cop: 3.85, maxcurrent: "N/A", pipeSize: "6.4 / 12.7" },
+      { model: "FVXM71YVMA", coolingKW: 6.7, heatingKW: 8.0, eer: 3.40, cop: 3.64, maxcurrent: "N/A", pipeSize: "6.4 / 12.7" }
+    ]
+  },
+  {
+    name: "Fujitsu Standard",
+    models: [
+      { model: "ASTH07KNCA", heatingKW: 2.5, coolingKW: 2.0, cop: 3.97, eer: 4.17, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "ASTH09KNCA", heatingKW: 3.2, coolingKW: 2.5, cop: 4.16, eer: 4.24, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "ASTH12KNCA", heatingKW: 4.0, coolingKW: 3.4, cop: 4.00, eer: 3.54, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "ASTH14KNCA", heatingKW: 4.7, coolingKW: 4.2, cop: 4.16, eer: 3.41, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "ASTH18KNTA", heatingKW: 5.2, coolingKW: 5.0, cop: 3.91, eer: 3.47, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "ASTH22KNTA", heatingKW: 6.5, coolingKW: 6.0, cop: 3.51, eer: 3.37, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "ASTH24KNTA", heatingKW: 8.0, coolingKW: 7.1, cop: 3.85, eer: 3.23, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "ASTH30KNTA", heatingKW: 9.0, coolingKW: 8.5, cop: 3.77, eer: 3.41, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "ASTH34KNTA", heatingKW: 10.3, coolingKW: 9.5, cop: 3.39, eer: 3.49, pipeSize: "N/A", maxcurrent: "N/A" }
     ]
   },
   {
     name: "Daikin Standard",
     models: [
-      { model: "FTXV20UVMA", heatingKW: 2.7, coolingKW: 2.0, cop: 4.58, eer: 4.65 },
-      { model: "FTXV25UVMA", heatingKW: 3.2, coolingKW: 2.5, cop: 4.92, eer: 4.81 },
-      { model: "FTXV35UVMA", heatingKW: 3.7, coolingKW: 3.5, cop: 4.68, eer: 3.98 },
-      { model: "FTXV46UVMA", heatingKW: 4.7, coolingKW: 4.6, cop: 3.98, eer: 3.77 },
-      { model: "FTXV50UVMA", heatingKW: 6.0, coolingKW: 5.0, cop: 4.20, eer: 3.91 },
-      { model: "FTXV60UVMA", heatingKW: 7.2, coolingKW: 6.0, cop: 4.16, eer: 3.66 },
-      { model: "FTXV71UVMA", heatingKW: 8.0, coolingKW: 7.1, cop: 3.94, eer: 3.57 },
-      { model: "FTXV80WVMA", heatingKW: 9.0, coolingKW: 8.0, cop: 3.27, eer: 3.69 },
-      { model: "FTXV90WVMA", heatingKW: 10.3, coolingKW: 9.0, cop: 3.27, eer: 3.40 }
+      { model: "FTXV20UVMA", heatingKW: 2.7, coolingKW: 2.0, cop: 4.58, eer: 4.65, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "FTXV25UVMA", heatingKW: 3.2, coolingKW: 2.5, cop: 4.92, eer: 4.81, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "FTXV35UVMA", heatingKW: 3.7, coolingKW: 3.5, cop: 4.68, eer: 3.98, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "FTXV46UVMA", heatingKW: 4.7, coolingKW: 4.6, cop: 3.98, eer: 3.77, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "FTXV50UVMA", heatingKW: 6.0, coolingKW: 5.0, cop: 4.20, eer: 3.91, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "FTXV60UVMA", heatingKW: 7.2, coolingKW: 6.0, cop: 4.16, eer: 3.66, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "FTXV71UVMA", heatingKW: 8.0, coolingKW: 7.1, cop: 3.94, eer: 3.57, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "FTXV80WVMA", heatingKW: 9.0, coolingKW: 8.0, cop: 3.27, eer: 3.69, pipeSize: "N/A", maxcurrent: "N/A" },
+      { model: "FTXV90WVMA", heatingKW: 10.3, coolingKW: 9.0, cop: 3.27, eer: 3.40, pipeSize: "N/A", maxcurrent: "N/A" }
     ]
   }
 ];
@@ -308,6 +319,7 @@ function calculate() {
   Cooling Capacity: ${rec.coolingKW} kW <br>
   COP: ${rec.cop} | EER: ${rec.eer} <br>
   Current Draw: ${rec.currentDraw.toFixed(2)} A <br>
+  Max Current Draw: ${rec.maxcurrent} A <br>
   Pipe Sizes: ${rec.pipeSize} mm
 </p>
               <a href="#" style="color: #007AC1;">View Product</a>
