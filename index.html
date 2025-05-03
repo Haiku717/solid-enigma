@@ -146,42 +146,44 @@ useCustomKW.addEventListener('change', () => {
       }
     }
 
-    function calculate() {
-      const length = parseFloat(document.getElementById('length').value);
-      const width = parseFloat(document.getElementById('width').value);
-      const height = parseFloat(document.getElementById('height').value);
-      const houseType = document.getElementById('houseType').value;
-      const insulation = document.getElementById('insulation').value;
-
-      if ((!useCustomKW.checked || customKWInput.value.trim() === '') &&
-    (isNaN(length) || isNaN(width) || isNaN(height))) {
-  document.getElementById('result').innerHTML = '<p style="color: red;">Please enter valid room dimensions or enter a custom kW value.</p>';
-  return;
+    function calculateCurrentDraw(heatingKW, cop) {
+  const voltage = 230; // Standard voltage for most regions
+  return (heatingKW * 1000) / (voltage * cop);
 }
 
-      document.getElementById('result').innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Calculating...</p>';
+function calculate() {
+  const length = parseFloat(document.getElementById('length').value);
+  const width = parseFloat(document.getElementById('width').value);
+  const height = parseFloat(document.getElementById('height').value);
+  const houseType = document.getElementById('houseType').value;
+  const insulation = document.getElementById('insulation').value;
 
-      const volume = length * width * height;
-
-      let heatingKW;
-if (useCustomKW.checked && customKWInput.value.trim() !== '') {
-  heatingKW = parseFloat(customKWInput.value);
-} else {
-  const volume = length * width * height;
-
-  let heatingW = 50;
-  if (houseType === 'new') {
-    heatingW = insulation === 'good' ? 50 : insulation === 'average' ? 55 : 60;
-  } else {
-    heatingW = insulation === 'good' ? 55 : insulation === 'average' ? 65 : 70;
+  if ((!useCustomKW.checked || customKWInput.value.trim() === '') &&
+    (isNaN(length) || isNaN(width) || isNaN(height))) {
+    document.getElementById('result').innerHTML = '<p style="color: red;">Please enter valid room dimensions or enter a custom kW value.</p>';
+    return;
   }
 
-  heatingKW = (volume * heatingW / 1000);
-}
+  document.getElementById('result').innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Calculating...</p>';
 
-heatingKW = heatingKW.toFixed(2);
+  const volume = length * width * height;
 
+  let heatingKW;
+  if (useCustomKW.checked && customKWInput.value.trim() !== '') {
+    heatingKW = parseFloat(customKWInput.value);
+  } else {
+    let heatingW = 50;
+    if (houseType === 'new') {
+      heatingW = insulation === 'good' ? 50 : insulation === 'average' ? 55 : 60;
+    } else {
+      heatingW = insulation === 'good' ? 55 : insulation === 'average' ? 65 : 70;
+    }
 
+    heatingKW = (volume * heatingW / 1000);
+  }
+
+  heatingKW = heatingKW.toFixed(2);
+  
       const brands = [
         {
           name: "Mitsubishi Electric AP series",
@@ -197,16 +199,16 @@ heatingKW = heatingKW.toFixed(2);
         },
         {
           name: "Daikin Cora",
-          models: [
-            { model: "FTXM20UVMZ", heatingKW: 2.8, coolingKW: 2.0, cop: 4.83, eer: 5.00 },
-            { model: "FTXM25UVMZ", heatingKW: 3.3, coolingKW: 2.5, cop: 4.85, eer: 5.10 },
-            { model: "FTXM35UVMZ", heatingKW: 4.0, coolingKW: 3.5, cop: 4.60, eer: 4.32 },
-            { model: "FTXM46UVMZ", heatingKW: 5.4, coolingKW: 4.6, cop: 3.89, eer: 3.83 },
-            { model: "FTXM50UVMZ", heatingKW: 6.1, coolingKW: 5.0, cop: 4.55, eer: 4.39 },
-            { model: "FTXM60UVMZ", heatingKW: 7.3, coolingKW: 6.0, cop: 4.40, eer: 3.95 },
-            { model: "FTXM71UVMZ", heatingKW: 8.1, coolingKW: 7.1, cop: 4.22, eer: 3.68 },
-            { model: "FTXM85PAVMA", heatingKW: 9.0, coolingKW: 8.5, cop: 3.72, eer: 3.47 },
-            { model: "FTXM95PAVMA", heatingKW: 10.3, coolingKW: 9.4, cop: 3.36, eer: 3.42 }
+  models: [
+    { model: "FTXM20UVMZ", heatingKW: 2.8, coolingKW: 2.0, cop: 4.83, eer: 5.00, pipeSize: "6.4 / 9.5" },
+    { model: "FTXM25UVMZ", heatingKW: 3.3, coolingKW: 2.5, cop: 4.85, eer: 5.10, pipeSize: "6.4 / 9.5" },
+    { model: "FTXM35UVMZ", heatingKW: 4.0, coolingKW: 3.5, cop: 4.60, eer: 4.32, pipeSize: "6.4 / 9.5" },
+    { model: "FTXM46UVMZ", heatingKW: 5.4, coolingKW: 4.6, cop: 3.89, eer: 3.83, pipeSize: "6.4 / 12.7" },
+    { model: "FTXM50UVMZ", heatingKW: 6.1, coolingKW: 5.0, cop: 4.55, eer: 4.39, pipeSize: "6.4 / 12.7" },
+    { model: "FTXM60UVMZ", heatingKW: 7.3, coolingKW: 6.0, cop: 4.40, eer: 3.95, pipeSize: "6.4 / 12.7" },
+    { model: "FTXM71UVMZ", heatingKW: 8.1, coolingKW: 7.1, cop: 4.22, eer: 3.68, pipeSize: "6.4 / 15.9" },
+    { model: "FTXM85PAVMA", heatingKW: 9.0, coolingKW: 8.5, cop: 3.72, eer: 3.47, pipeSize: "6.4 / 15.9" },
+    { model: "FTXM95PAVMA", heatingKW: 10.3, coolingKW: 9.4, cop: 3.36, eer: 3.42, pipeSize: "6.4 / 15.9" }
           ]
         },
         {
@@ -261,18 +263,21 @@ heatingKW = heatingKW.toFixed(2);
     
     const recommendations = [];
 
-    for (const brand of brands) {
-      const suitableModels = brand.models.filter(m => m.heatingKW >= heatingKW);
-      if (suitableModels.length > 0) {
-        const bestMatch = suitableModels.reduce((prev, curr) =>
-          curr.heatingKW < prev.heatingKW ? curr : prev
-        );
-        recommendations.push({ brand: brand.name, ...bestMatch });
-      }
+  for (const brand of brands) {
+    const suitableModels = brand.models.filter(m => m.heatingKW >= heatingKW);
+    if (suitableModels.length > 0) {
+      const bestMatch = suitableModels.reduce((prev, curr) =>
+        curr.heatingKW < prev.heatingKW ? curr : prev
+      );
+      // Calculate current draw and add it to the model details
+      const currentDraw = calculateCurrentDraw(bestMatch.heatingKW, bestMatch.cop);
+      recommendations.push({ brand: brand.name, ...bestMatch, currentDraw });
     }
+  }
 
-    recommendations.sort((a, b) => b.cop - a.cop);
+  recommendations.sort((a, b) => b.cop - a.cop);
 
+  
     initialResults = {
       volume,
       heatingKW,
@@ -298,10 +303,13 @@ heatingKW = heatingKW.toFixed(2);
             <summary style="cursor: pointer; font-weight: 600; font-size: 16px;">
               <i class="fas fa-snowflake" style="margin-right: 10px; color: #007AC1;"></i>${rec.model} <span style="color: #555;">(${rec.brand})</span>
             </summary>
-            <p style="margin-top: 10px; padding-left: 10px;">
-              Heating Capacity: ${rec.heatingKW} kW <br>
-              Cooling Capacity: ${rec.coolingKW} kW <br>
-              COP: ${rec.cop} | EER: ${rec.eer} <br>
+           <p style="margin-top: 10px; padding-left: 10px;">
+  Heating Capacity: ${rec.heatingKW} kW <br>
+  Cooling Capacity: ${rec.coolingKW} kW <br>
+  COP: ${rec.cop} | EER: ${rec.eer} <br>
+  Current Draw: ${rec.currentDraw.toFixed(2)} A <br>
+  Pipe Sizes: ${rec.pipeSize} mm
+</p>
               <a href="#" style="color: #007AC1;">View Product</a>
             </p>
           </details>
