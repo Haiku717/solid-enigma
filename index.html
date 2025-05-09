@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -28,6 +31,25 @@
     <input type="number" id="customKW" placeholder="Enter kW" step="0.1" style="flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #ccc;">
   </label>
 </div>
+
+     <div class="section">
+        
+       <div class="cop-compare">
+    <div class="input-group">
+        <label for="number1" class="input-label">First COP:</label>
+        <input type="number" id="number1" class="input-field" placeholder="e.g. 3.5">
+    </div>
+    <div class="input-group">
+        <label for="number2" class="input-label">Second COP:</label>
+        <input type="number" id="number2" class="input-field" placeholder="e.g. 4.0">
+    </div>
+    <button class="button" onclick="calculatePercentageDifference()">Calculate</button>
+    <div id="percentage-difference-result" class="result"></div>
+</div>
+
+
+
+    </div>
 
       <div style="margin-top: 20px;">
         <label style="display: flex; align-items: center; gap: 10px;">
@@ -410,6 +432,19 @@ function calculate() {
 
   // Initial calculation trigger
   calculate();
+    
+    function calculatePercentageDifference() {
+            const num1 = parseFloat(document.getElementById('number1').value);
+            const num2 = parseFloat(document.getElementById('number2').value);
+            if (!isNaN(num1) && !isNaN(num2) && num1 !== 0) {
+                const difference = Math.abs(num1 - num2);
+                const percentageDifference = (difference / num1) * 100;
+                document.getElementById('percentage-difference-result').innerText = `Percentage Difference: ${percentageDifference.toFixed(2)}%`;
+            } else {
+                document.getElementById('percentage-difference-result').innerText = "Please enter valid numbers (first number must not be zero).";
+            }
+        }
+    
 </script>
 
 
